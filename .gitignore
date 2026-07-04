@@ -1,0 +1,24 @@
+# Env
+.env
+.env.local
+
+# Java / Maven
+backend/target/
+*.class
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Recordings (kept out of git if large; committed only if user wants final-sprint demo tracked)
+.recordings/*.webm
