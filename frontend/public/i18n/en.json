@@ -1,0 +1,30 @@
+{
+  "auth": {
+    "login": {
+      "title": "Log in",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Create an account",
+      "error": "Incorrect email or password"
+    },
+    "register": {
+      "title": "Create an account",
+      "fullName": "Full name",
+      "email": "Email",
+      "password": "Password",
+      "role": "I am a",
+      "roleStudent": "Student",
+      "roleTutor": "Tutor",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Log in",
+      "success": "Account created, you can now log in"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "logout": "Log out"
+  }
+}

@@ -1,0 +1,44 @@
+<div class="auth-page">
+  <mat-card class="auth-card">
+    <h1>{{ 'auth.register.title' | translate }}</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'auth.register.fullName' | translate }}</mat-label>
+        <input matInput formControlName="fullName" autocomplete="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'auth.register.email' | translate }}</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'auth.register.password' | translate }}</mat-label>
+        <input matInput type="password" formControlName="password" autocomplete="new-password" />
+      </mat-form-field>
+
+      <label class="role-label">{{ 'auth.register.role' | translate }}</label>
+      <mat-radio-group formControlName="role" class="role-group">
+        <mat-radio-button value="STUDENT">{{ 'auth.register.roleStudent' | translate }}</mat-radio-button>
+        <mat-radio-button value="TUTOR">{{ 'auth.register.roleTutor' | translate }}</mat-radio-button>
+      </mat-radio-group>
+
+      @if (errorKey()) {
+        <p class="error">{{ errorKey() | translate }}</p>
+      }
+      @if (successKey()) {
+        <p class="success">{{ successKey() | translate }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting()">
+        {{ 'auth.register.submit' | translate }}
+      </button>
+    </form>
+
+    <p class="switch-link">
+      {{ 'auth.register.hasAccount' | translate }}
+      <a routerLink="/login">{{ 'auth.register.loginLink' | translate }}</a>
+    </p>
+  </mat-card>
+</div>

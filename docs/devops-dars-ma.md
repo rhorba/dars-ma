@@ -161,6 +161,26 @@ EXPOSE 80
 | `CMI_API_KEY` | CMI API key | unset in dev (mock mode ignores it) |
 | `SMTP_HOST` / `SMTP_PORT` | Email delivery | dev: local Mailhog container (not yet added — add if notification story needs real send-testing) |
 | `SPRING_PROFILES_ACTIVE` | Spring profile selector | `dev` |
-| `ANGULAR_API_BASE_URL` | Frontend → backend API base | `http://localhost:8080` |
+| `COOKIE_SECURE` | refresh_token cookie Secure flag | `false` locally (plain HTTP), MUST be `true` in staging/prod |
 
 📝 Log: ENV_VARS_COLLECTED → .logs/activity.md
+
+## 8. Same-Origin API Access (added during Sprint 1 implementation)
+Angular calls relative `/api/*` paths only — no separate API base URL or CORS config exists. Both environments proxy to the backend so the browser only ever sees one origin:
+- **Dev**: `ng serve` uses `frontend/proxy.conf.json` to forward `/api` → `http://localhost:8080`
+- **Prod**: Nginx (`frontend/nginx.conf`) proxies `/api/` → `http://backend:8080/api/` inside the Docker network
+
+This was chosen over CORS + cross-origin cookies because the refresh token is an HttpOnly cookie (Security Baseline) — same-origin avoids `SameSite`/credentials complexity entirely.
+
+## 9. Local Backend Testing via Docker (no local JDK/Maven)
+Per the Sprint 1 toolchain decision (host has JDK21 max, project targets Java 25), backend tests run via:
+```bash
+docker run --rm \
+  -v "$(pwd)/backend:/app" \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e TESTCONTAINERS_RYUK_DISABLED=true \
+  -e TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal \
+  -w /app maven:3.9-eclipse-temurin-25 mvn -B verify
+```
+The two env vars work around Docker Desktop for Windows/Mac networking when Testcontainers runs *inside* a container that reaches the host's Docker daemon via a mounted socket (Docker-outside-of-Docker): Ryuk's reaper can't be reached by sibling containers in this topology, and Testcontainers must be told to reach exposed container ports via `host.docker.internal` rather than the auto-detected bridge IP. GitHub Actions runners don't need this (Testcontainers runs directly on the runner's Docker daemon, no DooD layer) — `ci.yml` calls `./mvnw -B verify` plainly.
+

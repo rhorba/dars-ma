@@ -1,0 +1,30 @@
+{
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "email": "Email",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "noAccount": "Pas encore de compte ?",
+      "registerLink": "Créer un compte",
+      "error": "Email ou mot de passe incorrect"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "fullName": "Nom complet",
+      "email": "Email",
+      "password": "Mot de passe",
+      "role": "Je suis",
+      "roleStudent": "Étudiant",
+      "roleTutor": "Tuteur",
+      "submit": "Créer mon compte",
+      "hasAccount": "Déjà un compte ?",
+      "loginLink": "Se connecter",
+      "success": "Compte créé, vous pouvez vous connecter"
+    }
+  },
+  "nav": {
+    "home": "Accueil",
+    "logout": "Déconnexion"
+  }
+}

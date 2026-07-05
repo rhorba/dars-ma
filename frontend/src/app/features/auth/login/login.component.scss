@@ -1,0 +1,27 @@
+.auth-page {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.error {
+  color: var(--mat-sys-error, #dc2626);
+  font-size: 0.875rem;
+}
+
+.switch-link {
+  margin-top: 16px;
+  text-align: center;
+}

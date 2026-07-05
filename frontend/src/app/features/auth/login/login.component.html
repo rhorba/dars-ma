@@ -1,0 +1,30 @@
+<div class="auth-page">
+  <mat-card class="auth-card">
+    <h1>{{ 'auth.login.title' | translate }}</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'auth.login.email' | translate }}</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'auth.login.password' | translate }}</mat-label>
+        <input matInput type="password" formControlName="password" autocomplete="current-password" />
+      </mat-form-field>
+
+      @if (errorKey()) {
+        <p class="error">{{ errorKey() | translate }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting()">
+        {{ 'auth.login.submit' | translate }}
+      </button>
+    </form>
+
+    <p class="switch-link">
+      {{ 'auth.login.noAccount' | translate }}
+      <a routerLink="/register">{{ 'auth.login.registerLink' | translate }}</a>
+    </p>
+  </mat-card>
+</div>

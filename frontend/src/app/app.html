@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+  <span class="brand">Dars.ma</span>
+  <span class="spacer"></span>
+
+  <button mat-button [matMenuTriggerFor]="langMenu">{{ currentLang().toUpperCase() }}</button>
+  <mat-menu #langMenu="matMenu">
+    <button mat-menu-item (click)="setLang('fr')">Français</button>
+    <button mat-menu-item (click)="setLang('ar')">العربية</button>
+    <button mat-menu-item (click)="setLang('en')">English</button>
+  </mat-menu>
+
+  @if (isAuthenticated()) {
+    <button mat-button (click)="logout()">{{ 'nav.logout' | translate }}</button>
+  }
+</mat-toolbar>
+
+<router-outlet></router-outlet>

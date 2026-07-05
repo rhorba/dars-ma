@@ -19,6 +19,10 @@ frontend/.angular/
 # OS
 .DS_Store
 Thumbs.db
+bash.exe.stackdump
+
+# Claude Code harness state (not project data)
+.claude/scheduled_tasks.lock
 
 # Recordings (kept out of git if large; committed only if user wants final-sprint demo tracked)
 .recordings/*.webm
