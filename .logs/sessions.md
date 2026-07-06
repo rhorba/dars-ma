@@ -14,3 +14,8 @@ Decisions to remember: CMI_MODE=mock until real sandbox creds provided (Story 7.
 
 ## SESSION_START — 2026-07-04 (session 2)
 Resuming from session 1 SESSION_END. Starting Sprint 1 execution (Foundation & Auth: stories 1.1-1.4).
+
+## SESSION_END — 2026-07-06
+Sprint 1 (Foundation & Auth) fully shipped: backend scaffold, Flyway migrations, JWT auth (register/login/refresh with rotation+reuse-detection), Angular auth shell with FR/AR(RTL)/EN i18n, Docker Compose stack, CI pipeline. Coverage gates met (backend 84%, frontend 93.46%). CI green on github.com/rhorba/dars-ma main (commit d023581 and its predecessors). No code before docs was violated - foundation docs (session 1) shipped before any code, per rule 13.
+Next: Sprint 2 (Profiles & Verification) - stories 2.1-2.4 per docs/stories-dars-ma.md.
+Known follow-ups: Trivy's Java analyzer needs a warm Maven cache to avoid rate-limiting (documented in CI); CMI escrow still in mock mode (real credentials not yet available); video recording intentionally deferred to Sprint 8 per project convention.

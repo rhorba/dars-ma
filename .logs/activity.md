@@ -50,3 +50,11 @@ Sprint 1 (Foundation & Auth) VERIFY phase complete:
 - Full docker-compose stack (backend+frontend+db) smoke-tested end-to-end: register -> login (HttpOnly refresh cookie issued) -> refresh (rotation working) all verified via curl through the real Nginx proxy.
 - Security: Gitleaks scan clean (2 findings, both confirmed false positives: a Spring Boot test-log artifact already gitignored via target/, and an intentionally-fake JWT test fixture now marked with a gitleaks:allow comment). Trivy dependency/vuln scan attempted locally 3x; final attempt completed DB download + started analysis but timed out on Maven dependency resolution (network-bound semaphore deadline, not a finding) after ~8 min; Trivy runs automatically on every push via CI (ci.yml) in a clean Linux runner environment, so this is not a blocking gap.
 - Fixed during verification: dev JWT signing key was too short for HS256 (WeakKeyException) - lengthened default + .env.example; nginx.conf lacked the /api proxy block in the built image (stale Docker cache, rebuilt); host port conflicts with other locally-running projects (made compose ports configurable via BACKEND_HOST_PORT/FRONTEND_HOST_PORT/DB_HOST_PORT env vars).
+
+## CI STATUS — 2026-07-06
+CI went RED twice after the initial Sprint 1 push, fixed iteratively per the CI monitoring protocol:
+1. RED: mvnw lost its executable bit on commit (Windows checkout) -> fixed via `git update-index --chmod=+x`
+2. RED: Trivy's Java analyzer hit Maven Central's 429 rate limit resolving pom.xml transitively -> fixed by warming the Maven cache (`mvnw dependency:go-offline`) before the Trivy step
+3. RED (real finding): Trivy found 24 CVEs (4 CRITICAL, 20 HIGH) in Spring Boot 3.5.0's managed dependencies (Tomcat, Jackson-databind, Spring Security, Spring Boot actuator, pgjdbc) -> fixed by bumping to Spring Boot 3.5.16 (same minor line, no behavior change), re-verified all 12 backend tests still pass
+4. RED: gitleaks still flagged the fake JWT test fixture despite an "allow" comment on the line above -> fixed by moving gitleaks:allow onto the exact flagged line (directive only applies same-line)
+Final run (28769328224): GREEN — backend-test, frontend-test, security, build all passed.
