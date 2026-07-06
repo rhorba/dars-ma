@@ -4,9 +4,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 
 // A JWT with payload {"sub":"user-1","role":"STUDENT","exp":9999999999} — signature is irrelevant client-side.
-// gitleaks:allow — fake test fixture, not a real credential.
-const FAKE_ACCESS_TOKEN =
-  'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEiLCJyb2xlIjoiU1RVREVOVCIsImV4cCI6OTk5OTk5OTk5OX0.signature';
+const FAKE_ACCESS_TOKEN = // gitleaks:allow
+  'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEiLCJyb2xlIjoiU1RVREVOVCIsImV4cCI6OTk5OTk5OTk5OX0.signature'; // gitleaks:allow
 
 describe('AuthService', () => {
   let service: AuthService;
