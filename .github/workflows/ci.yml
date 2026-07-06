@@ -38,6 +38,16 @@ jobs:
       - uses: returntocorp/semgrep-action@v1
         with:
           config: p/owasp-top-ten
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+      # Trivy's Java analyzer resolves parent POMs over the network unless they're already
+      # in ~/.m2 — without this it can hit Maven Central's rate limit (429) on shared runners.
+      - name: Warm Maven cache for Trivy's Java analyzer
+        working-directory: backend
+        run: ./mvnw -B dependency:go-offline
       - uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
@@ -50,5 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Create .env for compose build
+        run: cp .env.example .env
       - name: Build Docker images
         run: docker compose build
