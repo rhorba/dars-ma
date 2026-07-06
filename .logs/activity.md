@@ -48,6 +48,11 @@ Phase: VERIFY complete (Sprint 2).
 - Full CI-equivalent Trivy/gitleaks scan not run locally (no local gitleaks binary); will be verified by CI on push per rule 11 (CI monitoring mandatory).
 Next: SHIP phase — commit, push, monitor CI to green.
 
+## MILESTONE — 2026-07-06
+Phase: SHIP complete (Sprint 2). Committed (d16a631) and pushed to github.com/rhorba/dars-ma main. CI run 28797374911 GREEN on first attempt (security, frontend-test, backend-test, build all passed) — no remediation needed this time.
+Sprint 2 (Profiles & Verification) fully shipped: tutor profile CRUD, encrypted verification document upload, admin approve/reject queue with notifications+audit log, VerificationGuard ready for Epic 4.
+Next: Sprint 3 (Gigs & Matching) — stories 3.1-3.4 per docs/stories-dars-ma.md.
+
 ## MILESTONE — 2026-07-04
 Phase: UNDERSTAND complete. Git repo initialized (main branch), remote origin set to github.com/rhorba/dars-ma.
 Stack pivot confirmed: Java 25 LTS + Spring Boot 3.x + Maven (backend), Angular latest LTS (frontend), PostgreSQL + pgvector (DB, retained from prior decision).
