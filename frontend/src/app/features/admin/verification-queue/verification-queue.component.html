@@ -1,0 +1,39 @@
+<div class="queue-page">
+  <h1>{{ 'admin.verification.title' | translate }}</h1>
+
+  @if (actionMessageKey()) {
+    <p class="message">{{ actionMessageKey() | translate }}</p>
+  }
+
+  @if (items().length === 0) {
+    <p>{{ 'admin.verification.empty' | translate }}</p>
+  }
+
+  @for (item of items(); track item.documentId) {
+    <mat-card class="queue-item">
+      <p class="tutor-name">{{ item.tutorFullName }}</p>
+      <p>{{ ('profile.tutor.docTypes.' + item.docType) | translate }} — {{ item.originalFilename }}</p>
+
+      <div class="actions">
+        <button mat-flat-button color="primary" type="button" (click)="approve(item.documentId)">
+          {{ 'admin.verification.approve' | translate }}
+        </button>
+
+        <mat-form-field appearance="outline" class="reason-field">
+          <mat-label>{{ 'admin.verification.rejectReason' | translate }}</mat-label>
+          <input matInput [ngModel]="reasonFor(item.documentId)" (ngModelChange)="setReason(item.documentId, $event)" />
+        </mat-form-field>
+
+        <button
+          mat-stroked-button
+          color="warn"
+          type="button"
+          [disabled]="!reasonFor(item.documentId).trim()"
+          (click)="reject(item.documentId)"
+        >
+          {{ 'admin.verification.reject' | translate }}
+        </button>
+      </div>
+    </mat-card>
+  }
+</div>

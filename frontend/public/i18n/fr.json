@@ -26,5 +26,46 @@
   "nav": {
     "home": "Accueil",
     "logout": "Déconnexion"
+  },
+  "profile": {
+    "tutor": {
+      "title": "Mon profil tuteur",
+      "bio": "Bio",
+      "subjects": "Matières",
+      "subjectsPlaceholder": "ex. Maths, Physique",
+      "hourlyRate": "Tarif horaire (MAD)",
+      "save": "Enregistrer",
+      "saveSuccess": "Profil enregistré",
+      "saveError": "Impossible d'enregistrer le profil",
+      "uploadTitle": "Documents de vérification",
+      "docType": "Type de document",
+      "docTypes": {
+        "DIPLOMA": "Diplôme",
+        "CERTIFICATE": "Certificat",
+        "ID": "Pièce d'identité"
+      },
+      "upload": "Envoyer",
+      "uploadSuccess": "Document envoyé, en attente de vérification",
+      "uploadError": "Échec de l'envoi — vérifiez le type (PDF/JPEG/PNG) et la taille (max 5 Mo)",
+      "status": {
+        "PENDING": "Vérification en attente",
+        "VERIFIED": "Vérifié",
+        "REJECTED": "Vérification refusée"
+      },
+      "rating": "Note",
+      "notFound": "Profil tuteur introuvable"
+    }
+  },
+  "admin": {
+    "verification": {
+      "title": "File de vérification",
+      "empty": "Aucun document en attente",
+      "approve": "Approuver",
+      "reject": "Refuser",
+      "rejectReason": "Motif du refus",
+      "approveSuccess": "Document approuvé",
+      "rejectSuccess": "Document refusé",
+      "actionError": "Action échouée"
+    }
   }
 }

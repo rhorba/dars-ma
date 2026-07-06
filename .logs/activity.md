@@ -2,6 +2,52 @@
 
 
 
+## MILESTONE — 2026-07-06
+Phase: UNDERSTAND complete (Sprint 2 — Profiles & Verification, stories 2.1-2.4).
+Reviewed docs/stories-dars-ma.md, database-dars-ma.md, security-dars-ma.md and existing scaffold (tutor_profiles/verification_documents already migrated in V002; profile/admin package dirs still empty).
+Gap found: Story 2.3 needs `notifications` + `audit_log_entries` tables, originally planned for migration 007 (Sprint 7 epic) — forward dependency conflict, flagged to user for BRAINSTORM.
+Next: BRAINSTORM options presented to user for migration ordering, encryption approach, and notification scope.
+
+## MILESTONE — 2026-07-06
+Phase: BRAINSTORM complete (Sprint 2). User picked all recommended options:
+1. Pull `notifications` + `audit_log_entries` tables forward into a new V005 migration now (Sprint 7 only adds delivery channels later).
+2. Verification document encryption: AES-256-GCM, key from `VERIFICATION_DOC_ENC_KEY` env var (added to .env.example), no KMS/Vault.
+3. Notification scope: in-app only (insert `notifications` row), no email/SMS delivery until Sprint 7.
+Next: PLAN phase.
+
+## MILESTONE — 2026-07-06
+Phase: PLAN complete (Sprint 2). Plan presented to user for confirmation:
+- New V005 migration (notifications + audit_log_entries, schema per DB doc).
+- backend/profile package: TutorProfile entity/repo/service/controller (self CRUD + public view), VerificationDocument entity/repo, DocumentEncryptionService (AES-256-GCM), VerificationController (multipart upload, type/size validation).
+- backend/admin package: AdminVerificationController (queue, approve/reject), NotificationService + AuditLogService (shared, reusable in later epics).
+- VerificationGuard component (Story 2.4) built standalone + unit-tested; wiring into booking-accept deferred to Epic 4 per story's own forward-dependency note.
+- frontend: tutor profile edit form, public profile view, document upload UI, admin queue UI with approve/reject+reason.
+- .env.example: add VERIFICATION_DOC_ENC_KEY.
+- Execution chunked per story (2.1 -> 2.2 -> 2.3 -> 2.4), checkpoint after each; VERIFY (tests+coverage+security) then SHIP (commit/push/CI) at the end.
+Next: EXECUTE phase pending user confirmation.
+
+## MILESTONE — 2026-07-06
+Phase: EXECUTE started (Sprint 2). User confirmed plan, no changes requested.
+HANDOFF: Orchestrator -> DBA + Backend Dev. Task: V005 migration (notifications, audit_log_entries) then Story 2.1 (TutorProfile CRUD + public view).
+
+## MILESTONE — 2026-07-06
+Sprint 2 (Profiles & Verification) EXECUTE complete, stories 2.1-2.4:
+- 2.1: TutorProfile CRUD (self PUT/GET + public GET), tutor_profiles reused from V002. SecurityConfig extended with /profile/tutor/me (ROLE_TUTOR) and public GET matcher.
+- 2.2: Verification document upload — AES-256-GCM encryption (DocumentEncryptionService, key via VERIFICATION_DOC_ENC_KEY), server-side type (PDF/JPEG/PNG) + 5MB size validation. Added V006 migration (mime_type, original_filename columns) — additive deviation from the original DB doc schema, needed for admin review/download; not a brainstorm-worthy tradeoff, just an implementation necessity.
+- 2.3: Admin verification queue (list/approve/reject with reason), V005 migration pulls notifications+audit_log_entries forward as agreed in BRAINSTORM. Added an admin document-content endpoint (decrypt + stream) after noticing DocumentEncryptionService.decrypt() was otherwise dead code and admins had no way to actually see a document before approving/rejecting it.
+- 2.4: VerificationGuard — standalone, unit-tested; wiring into booking-accept deferred to Epic 4 per the story's own forward-dependency note.
+- Frontend: tutor profile form + doc upload, public profile view, admin verification queue UI, role.guard.ts for TUTOR/ADMIN-gated routes, i18n keys added to fr/en/ar.
+HANDOFF: Backend Dev/Frontend Dev -> Test Architect/Security Engineer (VERIFY phase).
+
+## MILESTONE — 2026-07-06
+Phase: VERIFY complete (Sprint 2).
+- Backend: `mvn verify` green — 60/60 tests pass (unit + Testcontainers IT), JaCoCo instruction coverage 91% (gate is 80%, enforced by jacoco-check).
+- Frontend: 48/48 tests pass (vitest); coverage 88.6% statements / 94.2% lines / 89.3% branches / 80.7% functions (gate 80%). Production `ng build` succeeds cleanly.
+- Security self-review: role guards on new admin/tutor-only routes and endpoints; ownership enforced via JWT-derived userId (no IDOR); file upload type+size validated server-side; documents encrypted at rest (AES-256-GCM); admin content endpoint sanitizes filename in Content-Disposition header; audit log written on every approve/reject.
+- Avoided a repeat of Sprint 1's gitleaks false positive: replaced a random base64 dev-fallback encryption key with an obviously-fake all-zero placeholder + gitleaks:allow, matching the existing JWT signing-key convention.
+- Full CI-equivalent Trivy/gitleaks scan not run locally (no local gitleaks binary); will be verified by CI on push per rule 11 (CI monitoring mandatory).
+Next: SHIP phase — commit, push, monitor CI to green.
+
 ## MILESTONE — 2026-07-04
 Phase: UNDERSTAND complete. Git repo initialized (main branch), remote origin set to github.com/rhorba/dars-ma.
 Stack pivot confirmed: Java 25 LTS + Spring Boot 3.x + Maven (backend), Angular latest LTS (frontend), PostgreSQL + pgvector (DB, retained from prior decision).

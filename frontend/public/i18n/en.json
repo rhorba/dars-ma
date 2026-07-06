@@ -26,5 +26,46 @@
   "nav": {
     "home": "Home",
     "logout": "Log out"
+  },
+  "profile": {
+    "tutor": {
+      "title": "My tutor profile",
+      "bio": "Bio",
+      "subjects": "Subjects",
+      "subjectsPlaceholder": "e.g. Math, Physics",
+      "hourlyRate": "Hourly rate (MAD)",
+      "save": "Save",
+      "saveSuccess": "Profile saved",
+      "saveError": "Could not save profile",
+      "uploadTitle": "Verification documents",
+      "docType": "Document type",
+      "docTypes": {
+        "DIPLOMA": "Diploma",
+        "CERTIFICATE": "Certificate",
+        "ID": "ID"
+      },
+      "upload": "Upload",
+      "uploadSuccess": "Document uploaded, pending review",
+      "uploadError": "Upload failed — check file type (PDF/JPEG/PNG) and size (max 5MB)",
+      "status": {
+        "PENDING": "Verification pending",
+        "VERIFIED": "Verified",
+        "REJECTED": "Verification rejected"
+      },
+      "rating": "Rating",
+      "notFound": "Tutor profile not found"
+    }
+  },
+  "admin": {
+    "verification": {
+      "title": "Verification queue",
+      "empty": "No documents pending review",
+      "approve": "Approve",
+      "reject": "Reject",
+      "rejectReason": "Rejection reason",
+      "approveSuccess": "Document approved",
+      "rejectSuccess": "Document rejected",
+      "actionError": "Action failed"
+    }
   }
 }

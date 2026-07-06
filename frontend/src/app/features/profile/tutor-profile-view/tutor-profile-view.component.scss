@@ -1,0 +1,34 @@
+.view-page {
+  max-width: 560px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+}
+
+.verification-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  &.status-pending {
+    background: #fff3cd;
+    color: #7a5b00;
+  }
+  &.status-verified {
+    background: #d4edda;
+    color: #155724;
+  }
+  &.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+  }
+}

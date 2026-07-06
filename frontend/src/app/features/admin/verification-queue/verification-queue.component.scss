@@ -1,0 +1,33 @@
+.queue-page {
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.queue-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 24px;
+  margin-bottom: 16px;
+}
+
+.tutor-name {
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reason-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.message {
+  margin-bottom: 16px;
+}

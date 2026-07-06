@@ -1,0 +1,17 @@
+<div class="view-page">
+  @if (profile(); as p) {
+    <mat-card class="profile-card">
+      <p class="verification-badge" [class]="'status-' + p.verificationStatus.toLowerCase()">
+        {{ ('profile.tutor.status.' + p.verificationStatus) | translate }}
+      </p>
+      <p class="subjects">{{ p.subjects.join(', ') }}</p>
+      <p class="bio">{{ p.bio }}</p>
+      <p class="rate">{{ 'profile.tutor.hourlyRate' | translate }}: {{ p.hourlyRateMad }} MAD</p>
+      @if (p.avgRating !== null) {
+        <p class="rating">{{ 'profile.tutor.rating' | translate }}: {{ p.avgRating }}</p>
+      }
+    </mat-card>
+  } @else if (notFound()) {
+    <p>{{ 'profile.tutor.notFound' | translate }}</p>
+  }
+</div>

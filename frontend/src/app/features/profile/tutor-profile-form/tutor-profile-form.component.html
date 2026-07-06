@@ -1,0 +1,59 @@
+<div class="profile-page">
+  <mat-card class="profile-card">
+    <h1>{{ 'profile.tutor.title' | translate }}</h1>
+
+    @if (profile()) {
+      <p class="verification-badge" [class]="'status-' + profile()!.verificationStatus.toLowerCase()">
+        {{ ('profile.tutor.status.' + profile()!.verificationStatus) | translate }}
+      </p>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'profile.tutor.bio' | translate }}</mat-label>
+        <textarea matInput formControlName="bio" rows="4"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'profile.tutor.subjects' | translate }}</mat-label>
+        <input matInput formControlName="subjects" [placeholder]="'profile.tutor.subjectsPlaceholder' | translate" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'profile.tutor.hourlyRate' | translate }}</mat-label>
+        <input matInput type="number" step="0.01" formControlName="hourlyRateMad" />
+      </mat-form-field>
+
+      @if (saveMessageKey()) {
+        <p class="message">{{ saveMessageKey() | translate }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
+        {{ 'profile.tutor.save' | translate }}
+      </button>
+    </form>
+  </mat-card>
+
+  <mat-card class="profile-card">
+    <h2>{{ 'profile.tutor.uploadTitle' | translate }}</h2>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profile.tutor.docType' | translate }}</mat-label>
+      <mat-select [value]="selectedDocType()" (valueChange)="selectedDocType.set($event)">
+        @for (docType of docTypes; track docType) {
+          <mat-option [value]="docType">{{ ('profile.tutor.docTypes.' + docType) | translate }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)" />
+
+    @if (uploadMessageKey()) {
+      <p class="message">{{ uploadMessageKey() | translate }}</p>
+    }
+
+    <button mat-flat-button color="primary" type="button" [disabled]="!selectedFile() || uploading()" (click)="upload()">
+      {{ 'profile.tutor.upload' | translate }}
+    </button>
+  </mat-card>
+</div>

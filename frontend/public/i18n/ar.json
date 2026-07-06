@@ -26,5 +26,46 @@
   "nav": {
     "home": "الرئيسية",
     "logout": "تسجيل الخروج"
+  },
+  "profile": {
+    "tutor": {
+      "title": "ملفي كأستاذ",
+      "bio": "نبذة",
+      "subjects": "المواد",
+      "subjectsPlaceholder": "مثال: رياضيات، فيزياء",
+      "hourlyRate": "السعر بالساعة (درهم)",
+      "save": "حفظ",
+      "saveSuccess": "تم حفظ الملف الشخصي",
+      "saveError": "تعذر حفظ الملف الشخصي",
+      "uploadTitle": "وثائق التحقق",
+      "docType": "نوع الوثيقة",
+      "docTypes": {
+        "DIPLOMA": "دبلوم",
+        "CERTIFICATE": "شهادة",
+        "ID": "بطاقة تعريف"
+      },
+      "upload": "رفع",
+      "uploadSuccess": "تم رفع الوثيقة، في انتظار المراجعة",
+      "uploadError": "فشل الرفع — تحقق من نوع الملف (PDF/JPEG/PNG) وحجمه (5 ميغا كحد أقصى)",
+      "status": {
+        "PENDING": "التحقق قيد الانتظار",
+        "VERIFIED": "تم التحقق",
+        "REJECTED": "تم رفض التحقق"
+      },
+      "rating": "التقييم",
+      "notFound": "الملف الشخصي غير موجود"
+    }
+  },
+  "admin": {
+    "verification": {
+      "title": "قائمة انتظار التحقق",
+      "empty": "لا توجد وثائق قيد المراجعة",
+      "approve": "قبول",
+      "reject": "رفض",
+      "rejectReason": "سبب الرفض",
+      "approveSuccess": "تم قبول الوثيقة",
+      "rejectSuccess": "تم رفض الوثيقة",
+      "actionError": "فشل الإجراء"
+    }
   }
 }
