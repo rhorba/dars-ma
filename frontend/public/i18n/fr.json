@@ -56,6 +56,23 @@
       "notFound": "Profil tuteur introuvable"
     }
   },
+  "gig": {
+    "create": {
+      "title": "Publier une demande de cours",
+      "subject": "Matière",
+      "subjectError": "La matière est requise (100 caractères max)",
+      "level": "Niveau",
+      "levelError": "Le niveau est requis (50 caractères max)",
+      "description": "Description",
+      "descriptionError": "La description est requise (5000 caractères max)",
+      "budgetMin": "Budget min (MAD)",
+      "budgetMax": "Budget max (MAD)",
+      "budgetRangeError": "Le budget minimum ne doit pas dépasser le budget maximum",
+      "submit": "Publier",
+      "success": "Demande publiée — les tuteurs correspondants s'afficheront bientôt",
+      "submitError": "Impossible de publier la demande, vérifiez le formulaire et réessayez"
+    }
+  },
   "admin": {
     "verification": {
       "title": "File de vérification",

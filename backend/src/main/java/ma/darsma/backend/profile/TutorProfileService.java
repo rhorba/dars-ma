@@ -1,5 +1,6 @@
 package ma.darsma.backend.profile;
 
+import ma.darsma.backend.matching.EmbeddingService;
 import ma.darsma.backend.profile.dto.TutorProfileRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +14,11 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class TutorProfileService {
 
     private final TutorProfileRepository tutorProfileRepository;
+    private final EmbeddingService embeddingService;
 
-    public TutorProfileService(TutorProfileRepository tutorProfileRepository) {
+    public TutorProfileService(TutorProfileRepository tutorProfileRepository, EmbeddingService embeddingService) {
         this.tutorProfileRepository = tutorProfileRepository;
+        this.embeddingService = embeddingService;
     }
 
     @Transactional
@@ -25,7 +28,9 @@ public class TutorProfileService {
         profile.setBio(request.bio());
         profile.setSubjects(request.subjects());
         profile.setHourlyRateMad(request.hourlyRateMad());
-        return tutorProfileRepository.save(profile);
+        TutorProfile saved = tutorProfileRepository.save(profile);
+        embeddingService.embedTutorProfile(saved);
+        return saved;
     }
 
     public TutorProfile getByUserId(UUID tutorUserId) {

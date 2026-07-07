@@ -35,6 +35,12 @@ verification:
   # AES-256 key, base64-encoded (32 raw bytes). All-zero placeholder is dev-only and obviously not a real secret; real deployments must override via VERIFICATION_DOC_ENC_KEY.
   doc-encryption-key: ${VERIFICATION_DOC_ENC_KEY:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=} # gitleaks:allow
 
+embedding:
+  # Multilingual (FR/AR/EN) sentence-transformer, native 384-dim to match the tutor_embeddings/gig_embeddings columns.
+  model-name: ${EMBEDDING_MODEL_NAME:sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
+  # Downloaded from HuggingFace on first use and cached here (mounted as a Docker volume in prod).
+  cache-dir: ${EMBEDDING_CACHE_DIR:.djl-cache}
+
 management:
   endpoints:
     web:

@@ -74,7 +74,7 @@ CREATE INDEX idx_verification_documents_tutor ON verification_documents(tutor_us
 -- Table: tutor_embeddings (pgvector)
 CREATE TABLE tutor_embeddings (
   tutor_user_id UUID PRIMARY KEY REFERENCES tutor_profiles(user_id) ON DELETE CASCADE,
-  embedding     VECTOR(384) NOT NULL,   -- dimension per chosen embedding model
+  embedding     VECTOR(384) NOT NULL,   -- sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 (native 384-dim, FR/AR/EN)
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_tutor_embeddings_ann ON tutor_embeddings USING hnsw (embedding vector_cosine_ops);

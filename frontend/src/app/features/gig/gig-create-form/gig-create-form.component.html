@@ -1,0 +1,52 @@
+<div class="gig-page">
+  <mat-card class="gig-card">
+    <h1>{{ 'gig.create.title' | translate }}</h1>
+
+    @if (createdGig()) {
+      <p class="message success">{{ 'gig.create.success' | translate }}</p>
+    }
+    @if (errorMessageKey()) {
+      <p class="message error">{{ errorMessageKey() | translate }}</p>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'gig.create.subject' | translate }}</mat-label>
+        <input matInput formControlName="subject" />
+        @if (form.controls.subject.invalid && form.controls.subject.touched) {
+          <mat-error>{{ 'gig.create.subjectError' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'gig.create.level' | translate }}</mat-label>
+        <input matInput formControlName="level" />
+        @if (form.controls.level.invalid && form.controls.level.touched) {
+          <mat-error>{{ 'gig.create.levelError' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'gig.create.description' | translate }}</mat-label>
+        <textarea matInput formControlName="description" rows="5"></textarea>
+        @if (form.controls.description.invalid && form.controls.description.touched) {
+          <mat-error>{{ 'gig.create.descriptionError' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'gig.create.budgetMin' | translate }}</mat-label>
+        <input matInput type="number" step="0.01" formControlName="budgetMinMad" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'gig.create.budgetMax' | translate }}</mat-label>
+        <input matInput type="number" step="0.01" formControlName="budgetMaxMad" />
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+        {{ 'gig.create.submit' | translate }}
+      </button>
+    </form>
+  </mat-card>
+</div>

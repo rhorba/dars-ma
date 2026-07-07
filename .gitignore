@@ -5,6 +5,7 @@
 # Java / Maven
 backend/target/
 *.class
+backend/.djl-cache/
 
 # Node / Angular
 frontend/node_modules/

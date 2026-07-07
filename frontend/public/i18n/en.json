@@ -56,6 +56,23 @@
       "notFound": "Tutor profile not found"
     }
   },
+  "gig": {
+    "create": {
+      "title": "Post a gig request",
+      "subject": "Subject",
+      "subjectError": "Subject is required (max 100 characters)",
+      "level": "Level",
+      "levelError": "Level is required (max 50 characters)",
+      "description": "Description",
+      "descriptionError": "Description is required (max 5000 characters)",
+      "budgetMin": "Budget min (MAD)",
+      "budgetMax": "Budget max (MAD)",
+      "budgetRangeError": "Minimum budget must not exceed maximum budget",
+      "submit": "Post gig",
+      "success": "Gig posted — we'll show matched tutors shortly",
+      "submitError": "Could not post gig, please check the form and try again"
+    }
+  },
   "admin": {
     "verification": {
       "title": "Verification queue",

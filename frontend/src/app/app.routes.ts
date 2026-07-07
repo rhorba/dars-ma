@@ -28,6 +28,12 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'gigs/new',
+    loadComponent: () =>
+      import('./features/gig/gig-create-form/gig-create-form.component').then((m) => m.GigCreateFormComponent),
+    canActivate: [roleGuard(['STUDENT'])]
+  },
+  {
     path: 'admin/verification',
     loadComponent: () =>
       import('./features/admin/verification-queue/verification-queue.component').then(

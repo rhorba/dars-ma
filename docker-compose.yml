@@ -6,6 +6,7 @@ services:
       DB_HOST: db
       DB_PORT: 5432
     ports: ["${BACKEND_HOST_PORT:-8080}:8080"]
+    volumes: ["djl-cache:/app/.djl-cache"]
     depends_on:
       db:
         condition: service_healthy
@@ -29,3 +30,4 @@ services:
 
 volumes:
   pgdata:
+  djl-cache:

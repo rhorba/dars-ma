@@ -1,0 +1,32 @@
+.gig-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 560px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.gig-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+.message {
+  margin: 4px 0;
+
+  &.success {
+    color: #155724;
+  }
+  &.error {
+    color: #721c24;
+  }
+}

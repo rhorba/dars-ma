@@ -1,5 +1,6 @@
 package ma.darsma.backend.profile;
 
+import ma.darsma.backend.matching.EmbeddingService;
 import ma.darsma.backend.profile.dto.TutorProfileRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,12 +18,14 @@ import static org.mockito.Mockito.*;
 class TutorProfileServiceTest {
 
     private TutorProfileRepository tutorProfileRepository;
+    private EmbeddingService embeddingService;
     private TutorProfileService tutorProfileService;
 
     @BeforeEach
     void setUp() {
         tutorProfileRepository = mock(TutorProfileRepository.class);
-        tutorProfileService = new TutorProfileService(tutorProfileRepository);
+        embeddingService = mock(EmbeddingService.class);
+        tutorProfileService = new TutorProfileService(tutorProfileRepository, embeddingService);
     }
 
     @Test
@@ -39,6 +42,7 @@ class TutorProfileServiceTest {
         assertThat(result.getSubjects()).containsExactly("Math");
         assertThat(result.getHourlyRateMad()).isEqualByComparingTo("150.00");
         assertThat(result.getVerificationStatus()).isEqualTo(VerificationStatus.PENDING);
+        verify(embeddingService).embedTutorProfile(result);
     }
 
     @Test

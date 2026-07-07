@@ -8,6 +8,7 @@ RUN mvn -B package -DskipTests
 FROM eclipse-temurin:25-jre-alpine
 RUN addgroup -S app && adduser -S app -G app
 WORKDIR /app
+RUN chown app:app /app
 COPY --from=builder --chown=app:app /app/target/*.jar app.jar
 USER app
 HEALTHCHECK --interval=30s CMD wget -qO- http://localhost:8080/actuator/health || exit 1

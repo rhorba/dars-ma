@@ -109,3 +109,47 @@ CI went RED twice after the initial Sprint 1 push, fixed iteratively per the CI 
 3. RED (real finding): Trivy found 24 CVEs (4 CRITICAL, 20 HIGH) in Spring Boot 3.5.0's managed dependencies (Tomcat, Jackson-databind, Spring Security, Spring Boot actuator, pgjdbc) -> fixed by bumping to Spring Boot 3.5.16 (same minor line, no behavior change), re-verified all 12 backend tests still pass
 4. RED: gitleaks still flagged the fake JWT test fixture despite an "allow" comment on the line above -> fixed by moving gitleaks:allow onto the exact flagged line (directive only applies same-line)
 Final run (28769328224): GREEN — backend-test, frontend-test, security, build all passed.
+
+## UNDERSTAND — Sprint 3 (2026-07-06, session 4)
+Scope already defined in docs/stories-dars-ma.md (Epic 3): 3.1 gig request creation, 3.2 embedding generation for tutors/gigs, 3.3 pgvector match suggestions with filter-based fallback, 3.4 match list UI + browse/filter fallback. No new ambiguity in WHAT to build — the open design decision is HOW to generate embeddings (Story 3.2), since docs/database-dars-ma.md fixed VECTOR(384) but left "dimension per chosen embedding model" as a placeholder. Routing to BRAINSTORM on that specific decision before planning the sprint.
+
+## PLAN — Sprint 3 (2026-07-06, session 4)
+User confirmed plan: 4 batches (3.1 gig requests, 3.2 embeddings, 3.3 pgvector matching, 3.4 match UI). Starting Batch 1.
+
+HANDOFF: Orchestrator -> DBA + Backend Dev
+Context: Sprint 3 planned and confirmed. Batch 1 = Story 3.1 (student creates a gig request).
+Need: V007 migration for gig_requests (schema already fixed in docs/database-dars-ma.md), then GigRequest entity/repo/service/controller (create/get/list-by-student) with server-side validation, then Frontend Dev builds the creation form.
+Constraints: package-by-feature under backend/src/main/java/ma/darsma/backend/gig (currently empty placeholder); follow existing profile/ package conventions (see TutorProfile*.java) for entity/DTO/service/controller layering; status starts OPEN; budget_min/max optional.
+
+HANDOFF: Backend Dev -> Frontend Dev (Sprint 3, Batch 1)
+Context: Story 3.1 backend done - POST /api/v1/gigs (STUDENT role) and GET /api/v1/gigs/{id} (owner-only), validation (subject/level/description required, description<=5000 chars, budgetMin<=budgetMax), all backend tests passing (unit + Testcontainers integration).
+Need: Angular gig creation form (subject, level, description, budget min/max) with inline validation errors per UX Flow 1, i18n (fr/ar/en), submit -> POST /api/v1/gigs -> navigate to gig detail on success.
+Constraints: mirror existing tutor-profile form component structure/conventions in frontend/src/app; description limited to 5000 chars must be enforced client-side too for good UX.
+
+## EXECUTE — Sprint 3 Batch 1 complete (2026-07-06, session 4)
+Story 3.1 (student creates a gig request) shipped:
+- V007 migration: gig_requests table
+- Backend: GigStatus, GigRequest entity, GigRequestRepository, GigRequestService (create w/ budget-range validation, owner-scoped get), GigRequestController (POST /api/v1/gigs restricted to STUDENT role via SecurityConfig, GET /api/v1/gigs/{id} 403 for non-owners)
+- Backend tests: GigRequestServiceTest (5 tests) + GigRequestControllerIT (7 tests, Testcontainers) - all passing
+- Frontend: GigService, gig.models, GigCreateFormComponent (route /gigs/new, roleGuard STUDENT) with inline validation errors incl. client-side budget-range check, full FR/AR/EN i18n
+- Frontend tests: gig.service.spec.ts + gig-create-form.component.spec.ts - full suite 15 files / 54 tests passing
+HANDOFF: Frontend Dev -> Orchestrator
+Context: Batch 1 (Story 3.1) done and verified (backend + frontend tests green).
+Need: proceed to Batch 2 (Story 3.2, embedding generation) pending user go-ahead.
+
+HANDOFF: Orchestrator -> Backend Dev (Sprint 3, Batch 2)
+Context: Story 3.2 (embedding generation). Chosen approach: local multilingual ONNX model (sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2, native 384-dim) via DJL (ai.djl:api, ai.djl.onnxruntime:onnxruntime-engine, ai.djl.huggingface:tokenizers), model downloaded to a cached volume on first use. pgvector column mapping via a hand-written Hibernate UserType<float[]> using the already-declared com.pgvector:pgvector dependency (PGobject-based encode/decode, no JDBC driver type registration needed).
+Need: V008 migration (tutor_embeddings/gig_embeddings), VectorType, EmbeddingProvider (+local impl +test fake), TutorEmbedding/GigEmbedding entities+repos, EmbeddingService wired into TutorProfileService.upsert and GigRequestService.create, Docker/env wiring, tests.
+Constraints: Real-model integration test tagged "real-model" and excluded from CI's default `mvn verify` (network dependency on huggingface.co is not something the CI gate should depend on) - documented in pom.xml comment and CI-monitoring note. All existing/new @SpringBootTest ITs must use FakeEmbeddingProvider (profile "test", activated globally for surefire+failsafe via a system property) so they don't attempt to load the real model.
+
+## EXECUTE — Sprint 3 Batch 2 complete (2026-07-06, session 4)
+Story 3.2 (embedding generation) shipped:
+- V008 migration: tutor_embeddings, gig_embeddings + HNSW indexes
+- VectorType: hand-written Hibernate UserType<float[]> mapping vector(384) via com.pgvector:pgvector's PGvector (PGobject subclass), no JDBC driver type registration needed
+- EmbeddingProvider interface; LocalMultilingualEmbeddingProvider (DJL 0.36.0 + ONNX Runtime, sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2, profile "!test", model cached under embedding.cache-dir / EMBEDDING_CACHE_DIR); FakeEmbeddingProvider (deterministic, profile "test", test sources)
+- TutorEmbedding/GigEmbedding entities+repos, EmbeddingService wired into TutorProfileService.upsert and GigRequestService.create (regenerates embedding on every save)
+- pom.xml: postgresql driver scope changed runtime->compile (VectorType needs PGobject at compile time); surefire+failsafe both set spring.profiles.active=test; failsafe excludedGroups=real-model
+- Docker: djl-cache volume added, Dockerfile chowns /app so non-root user can write the model cache
+- Tests: EmbeddingServiceTest (unit), TutorProfileServiceTest/GigRequestServiceTest updated for new constructor dep + embed-called assertions, TutorProfileControllerIT/GigRequestControllerIT extended to assert real pgvector round-trip (384-dim) via Testcontainers, LocalMultilingualEmbeddingProviderIT (tagged real-model, validates real model + cross-language cosine similarity) - excluded from CI's default `mvn verify` since it depends on a huggingface.co download; run manually via `mvn verify -DexcludedGroups=` to validate
+- Full `mvn verify` green: all unit + integration tests pass, coverage gate met, real-model test correctly skipped
+Known follow-up: real-model IT is not part of CI gate by design (external network dependency) - documented in pom.xml comment.

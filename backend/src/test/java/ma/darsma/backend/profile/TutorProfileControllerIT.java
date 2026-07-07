@@ -1,6 +1,7 @@
 package ma.darsma.backend.profile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ma.darsma.backend.matching.TutorEmbeddingRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,7 +15,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Map;
+import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -45,6 +48,9 @@ class TutorProfileControllerIT {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private TutorEmbeddingRepository tutorEmbeddingRepository;
 
     private String registerAndLogin(String email, String role) throws Exception {
         String registerBody = objectMapper.writeValueAsString(Map.of(
@@ -77,6 +83,12 @@ class TutorProfileControllerIT {
         mockMvc.perform(get("/api/v1/profile/tutor/me").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.subjects[0]").value("Math"));
+
+        var response = mockMvc.perform(get("/api/v1/profile/tutor/me").header("Authorization", "Bearer " + token))
+                .andReturn().getResponse().getContentAsString();
+        UUID tutorUserId = UUID.fromString(objectMapper.readTree(response).get("userId").asText());
+        var embedding = tutorEmbeddingRepository.findById(tutorUserId).orElseThrow();
+        assertThat(embedding.getEmbedding()).hasSize(384);
     }
 
     @Test
