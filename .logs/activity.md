@@ -228,6 +228,10 @@ Adversarial checklist (Test Strategy §4, Booking/Escrow - Maximum rigor), verif
 Security: no local gitleaks binary this session either; manual review of the diff found no secrets. All new SQL uses JPA/parameterized queries.
 Next: SHIP (push, CI monitor).
 
+## SHIP — Sprint 4 Batch 4 / Epic 4 complete (2026-07-15, session 5)
+Pushed commit 75dc8ad to origin/main. CI run 29440508221: GREEN - frontend-test, security, backend-test, build all passed on the first attempt.
+Epic 4 (Booking & Escrow) fully shipped: stories 4.1-4.4 complete, CI green on main. Sprint 4-5 definition of done met (full booking->escrow->completion/dispute path works with mock CMI).
+
 ## SHIP — Sprint 4 batches 1-3 (2026-07-15, session 5)
 Pushed commit bff503a to origin/main. CI run 29437102583: GREEN - security (semgrep/trivy/gitleaks all clean, the fetch-depth fix from earlier this session held), frontend-test, backend-test, build all passed on the first attempt.
 Sprint 4 (Booking & Escrow) batches 1-3 complete: stories 4.1-4.3 shipped, CI green on main. Story 4.4 (dispute) and Sprint 4 final SESSION_END remain for a future session per the paced scope agreed in PLAN.
