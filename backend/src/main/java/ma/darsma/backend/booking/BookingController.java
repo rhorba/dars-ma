@@ -15,10 +15,13 @@ public class BookingController {
 
     private final BookingService bookingService;
     private final BookingCompletionService bookingCompletionService;
+    private final BookingDisputeService bookingDisputeService;
 
-    public BookingController(BookingService bookingService, BookingCompletionService bookingCompletionService) {
+    public BookingController(BookingService bookingService, BookingCompletionService bookingCompletionService,
+                              BookingDisputeService bookingDisputeService) {
         this.bookingService = bookingService;
         this.bookingCompletionService = bookingCompletionService;
+        this.bookingDisputeService = bookingDisputeService;
     }
 
     @PostMapping
@@ -38,5 +41,11 @@ public class BookingController {
     public BookingResponse complete(Authentication authentication, @PathVariable UUID id) {
         UUID requesterId = UUID.fromString(authentication.getName());
         return BookingResponse.from(bookingCompletionService.confirmCompletion(id, requesterId));
+    }
+
+    @PostMapping("/{id}/dispute")
+    public BookingResponse dispute(Authentication authentication, @PathVariable UUID id) {
+        UUID requesterId = UUID.fromString(authentication.getName());
+        return BookingResponse.from(bookingDisputeService.raise(id, requesterId));
     }
 }

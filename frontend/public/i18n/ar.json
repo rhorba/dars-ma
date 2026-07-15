@@ -115,11 +115,14 @@
         "REFUNDED": "مستردة"
       },
       "completedMessage": "اكتملت الجلسة — تم تحويل الأموال إلى الأستاذ",
+      "disputedMessage": "هذا الحجز محل نزاع — سيقوم المسؤول بمراجعته وتحديد النتيجة",
+      "refundedMessage": "تم استرداد هذا الحجز إلى الطالب",
       "studentConfirmed": "تأكيد الطالب",
       "tutorConfirmed": "تأكيد الأستاذ",
       "yes": "نعم",
       "no": "ليس بعد",
-      "markComplete": "وضع علامة اكتمال الجلسة"
+      "markComplete": "وضع علامة اكتمال الجلسة",
+      "reportIssue": "الإبلاغ عن مشكلة"
     }
   },
   "admin": {
@@ -131,6 +134,16 @@
       "rejectReason": "سبب الرفض",
       "approveSuccess": "تم قبول الوثيقة",
       "rejectSuccess": "تم رفض الوثيقة",
+      "actionError": "فشل الإجراء"
+    },
+    "disputes": {
+      "title": "الحجوزات المتنازع عليها",
+      "empty": "لا توجد نزاعات للمراجعة",
+      "student": "الطالب",
+      "tutor": "الأستاذ",
+      "releaseToTutor": "تحويل إلى الأستاذ",
+      "refundToStudent": "استرداد إلى الطالب",
+      "resolveSuccess": "تم حل النزاع",
       "actionError": "فشل الإجراء"
     }
   }

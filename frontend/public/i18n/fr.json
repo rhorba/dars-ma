@@ -115,11 +115,14 @@
         "REFUNDED": "Remboursée"
       },
       "completedMessage": "Séance terminée — les fonds ont été versés au tuteur",
+      "disputedMessage": "Cette réservation fait l'objet d'un litige — un administrateur va l'examiner et décider de l'issue",
+      "refundedMessage": "Cette réservation a été remboursée à l'étudiant",
       "studentConfirmed": "Étudiant confirmé",
       "tutorConfirmed": "Tuteur confirmé",
       "yes": "Oui",
       "no": "Pas encore",
-      "markComplete": "Marquer la séance comme terminée"
+      "markComplete": "Marquer la séance comme terminée",
+      "reportIssue": "Signaler un problème"
     }
   },
   "admin": {
@@ -131,6 +134,16 @@
       "rejectReason": "Motif du refus",
       "approveSuccess": "Document approuvé",
       "rejectSuccess": "Document refusé",
+      "actionError": "Action échouée"
+    },
+    "disputes": {
+      "title": "Réservations en litige",
+      "empty": "Aucun litige à examiner",
+      "student": "Étudiant",
+      "tutor": "Tuteur",
+      "releaseToTutor": "Verser au tuteur",
+      "refundToStudent": "Rembourser l'étudiant",
+      "resolveSuccess": "Litige résolu",
       "actionError": "Action échouée"
     }
   }

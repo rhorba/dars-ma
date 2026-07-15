@@ -53,4 +53,11 @@ describe('BookingService', () => {
     expect(req.request.method).toBe('POST');
     req.flush(sampleBooking);
   });
+
+  it('disputeBooking() POSTs to /api/v1/bookings/:id/dispute', () => {
+    service.disputeBooking('booking-1').subscribe();
+    const req = httpMock.expectOne('/api/v1/bookings/booking-1/dispute');
+    expect(req.request.method).toBe('POST');
+    req.flush(sampleBooking);
+  });
 });

@@ -18,4 +18,8 @@ export class BookingService {
   completeBooking(id: string): Observable<Booking> {
     return this.http.post<Booking>(`/api/v1/bookings/${id}/complete`, {});
   }
+
+  disputeBooking(id: string): Observable<Booking> {
+    return this.http.post<Booking>(`/api/v1/bookings/${id}/dispute`, {});
+  }
 }

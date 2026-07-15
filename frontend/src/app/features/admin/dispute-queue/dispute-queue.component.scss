@@ -1,0 +1,31 @@
+.queue-page {
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.queue-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 24px;
+  margin-bottom: 16px;
+}
+
+.price {
+  font-weight: 600;
+}
+
+.ids {
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.message {
+  margin-bottom: 16px;
+}

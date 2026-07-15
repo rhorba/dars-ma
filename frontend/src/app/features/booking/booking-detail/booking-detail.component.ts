@@ -26,6 +26,7 @@ export class BookingDetailComponent {
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly confirming = signal(false);
+  readonly disputing = signal(false);
 
   constructor() {
     this.load();
@@ -65,6 +66,10 @@ export class BookingDetailComponent {
     return this.isTutor(booking) && !booking.tutorConfirmedAt;
   }
 
+  canDispute(booking: Booking): boolean {
+    return booking.status === 'ESCROW_HELD' && (this.isStudent(booking) || this.isTutor(booking));
+  }
+
   confirm(): void {
     this.confirming.set(true);
     this.bookingService.completeBooking(this.bookingId).subscribe({
@@ -73,6 +78,17 @@ export class BookingDetailComponent {
         this.booking.set(booking);
       },
       error: () => this.confirming.set(false)
+    });
+  }
+
+  dispute(): void {
+    this.disputing.set(true);
+    this.bookingService.disputeBooking(this.bookingId).subscribe({
+      next: (booking) => {
+        this.disputing.set(false);
+        this.booking.set(booking);
+      },
+      error: () => this.disputing.set(false)
     });
   }
 }

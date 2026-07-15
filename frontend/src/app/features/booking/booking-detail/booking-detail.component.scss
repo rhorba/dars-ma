@@ -28,6 +28,17 @@
   padding: 8px 0;
 }
 
+.message.dispute {
+  padding: 8px 0;
+  color: #b45309;
+}
+
 .message.error {
   padding: 16px 0;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
 }

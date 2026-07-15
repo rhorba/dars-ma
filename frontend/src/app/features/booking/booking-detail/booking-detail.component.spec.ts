@@ -11,7 +11,11 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { Booking } from '../../../core/booking/booking.models';
 
 describe('BookingDetailComponent', () => {
-  let bookingServiceStub: { getBooking: ReturnType<typeof vi.fn>; completeBooking: ReturnType<typeof vi.fn> };
+  let bookingServiceStub: {
+    getBooking: ReturnType<typeof vi.fn>;
+    completeBooking: ReturnType<typeof vi.fn>;
+    disputeBooking: ReturnType<typeof vi.fn>;
+  };
   let authServiceStub: { userId: ReturnType<typeof vi.fn> };
 
   const escrowHeldBooking: Booking = {
@@ -41,7 +45,7 @@ describe('BookingDetailComponent', () => {
   }
 
   it('loads the booking and shows the mark-complete button for the student when unconfirmed', async () => {
-    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(of(escrowHeldBooking)), completeBooking: vi.fn() };
+    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(of(escrowHeldBooking)), completeBooking: vi.fn(), disputeBooking: vi.fn() };
     authServiceStub = { userId: vi.fn().mockReturnValue('student-1') };
     await configure();
     const fixture = TestBed.createComponent(BookingDetailComponent);
@@ -53,7 +57,7 @@ describe('BookingDetailComponent', () => {
 
   it('hides the mark-complete button once the current party already confirmed', async () => {
     const alreadyConfirmed = { ...escrowHeldBooking, studentConfirmedAt: '2026-07-15T01:00:00Z' };
-    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(of(alreadyConfirmed)), completeBooking: vi.fn() };
+    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(of(alreadyConfirmed)), completeBooking: vi.fn(), disputeBooking: vi.fn() };
     authServiceStub = { userId: vi.fn().mockReturnValue('student-1') };
     await configure();
     const fixture = TestBed.createComponent(BookingDetailComponent);
@@ -63,20 +67,22 @@ describe('BookingDetailComponent', () => {
   });
 
   it('does not show the mark-complete button for a non-party', async () => {
-    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(of(escrowHeldBooking)), completeBooking: vi.fn() };
+    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(of(escrowHeldBooking)), completeBooking: vi.fn(), disputeBooking: vi.fn() };
     authServiceStub = { userId: vi.fn().mockReturnValue('someone-else') };
     await configure();
     const fixture = TestBed.createComponent(BookingDetailComponent);
     fixture.detectChanges();
 
     expect(fixture.componentInstance.canConfirm(escrowHeldBooking)).toBe(false);
+    expect(fixture.componentInstance.canDispute(escrowHeldBooking)).toBe(false);
   });
 
   it('confirm() calls completeBooking and updates the booking signal', async () => {
     const completed = { ...escrowHeldBooking, status: 'COMPLETED' as const, studentConfirmedAt: 'x', tutorConfirmedAt: 'y' };
     bookingServiceStub = {
       getBooking: vi.fn().mockReturnValue(of(escrowHeldBooking)),
-      completeBooking: vi.fn().mockReturnValue(of(completed))
+      completeBooking: vi.fn().mockReturnValue(of(completed)),
+      disputeBooking: vi.fn()
     };
     authServiceStub = { userId: vi.fn().mockReturnValue('tutor-1') };
     await configure();
@@ -90,8 +96,37 @@ describe('BookingDetailComponent', () => {
     expect(fixture.componentInstance.confirming()).toBe(false);
   });
 
+  it('a party can dispute an escrow-held booking', async () => {
+    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(of(escrowHeldBooking)), completeBooking: vi.fn(), disputeBooking: vi.fn() };
+    authServiceStub = { userId: vi.fn().mockReturnValue('student-1') };
+    await configure();
+    const fixture = TestBed.createComponent(BookingDetailComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.canDispute(escrowHeldBooking)).toBe(true);
+  });
+
+  it('dispute() calls disputeBooking and updates the booking signal', async () => {
+    const disputed = { ...escrowHeldBooking, status: 'DISPUTED' as const };
+    bookingServiceStub = {
+      getBooking: vi.fn().mockReturnValue(of(escrowHeldBooking)),
+      completeBooking: vi.fn(),
+      disputeBooking: vi.fn().mockReturnValue(of(disputed))
+    };
+    authServiceStub = { userId: vi.fn().mockReturnValue('student-1') };
+    await configure();
+    const fixture = TestBed.createComponent(BookingDetailComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance.dispute();
+
+    expect(bookingServiceStub.disputeBooking).toHaveBeenCalledWith('booking-1');
+    expect(fixture.componentInstance.booking()).toEqual(disputed);
+    expect(fixture.componentInstance.disputing()).toBe(false);
+  });
+
   it('sets the error state when the booking fails to load', async () => {
-    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(throwError(() => new Error('403'))), completeBooking: vi.fn() };
+    bookingServiceStub = { getBooking: vi.fn().mockReturnValue(throwError(() => new Error('403'))), completeBooking: vi.fn(), disputeBooking: vi.fn() };
     authServiceStub = { userId: vi.fn().mockReturnValue('someone') };
     await configure();
     const fixture = TestBed.createComponent(BookingDetailComponent);

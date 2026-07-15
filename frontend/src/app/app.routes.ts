@@ -66,6 +66,12 @@ export const routes: Routes = [
     canActivate: [roleGuard(['ADMIN'])]
   },
   {
+    path: 'admin/disputes',
+    loadComponent: () =>
+      import('./features/admin/dispute-queue/dispute-queue.component').then((m) => m.DisputeQueueComponent),
+    canActivate: [roleGuard(['ADMIN'])]
+  },
+  {
     path: '',
     loadComponent: () => import('./shared/home.component').then((m) => m.HomeComponent),
     canActivate: [authGuard]

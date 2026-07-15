@@ -1,0 +1,28 @@
+<div class="queue-page">
+  <h1>{{ 'admin.disputes.title' | translate }}</h1>
+
+  @if (actionMessageKey()) {
+    <p class="message">{{ actionMessageKey() | translate }}</p>
+  }
+
+  @if (bookings().length === 0) {
+    <p>{{ 'admin.disputes.empty' | translate }}</p>
+  }
+
+  @for (booking of bookings(); track booking.id) {
+    <mat-card class="queue-item">
+      <p class="price">{{ 'booking.detail.price' | translate }}: {{ booking.agreedPriceMad }} MAD</p>
+      <p class="ids">{{ 'admin.disputes.student' | translate }}: {{ booking.studentUserId }}</p>
+      <p class="ids">{{ 'admin.disputes.tutor' | translate }}: {{ booking.tutorUserId }}</p>
+
+      <div class="actions">
+        <button mat-flat-button color="primary" type="button" (click)="resolve(booking.id, 'RELEASE')">
+          {{ 'admin.disputes.releaseToTutor' | translate }}
+        </button>
+        <button mat-stroked-button color="warn" type="button" (click)="resolve(booking.id, 'REFUND')">
+          {{ 'admin.disputes.refundToStudent' | translate }}
+        </button>
+      </div>
+    </mat-card>
+  }
+</div>

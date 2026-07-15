@@ -12,6 +12,10 @@
 
       @if (b.status === 'COMPLETED') {
         <p class="message success">{{ 'booking.detail.completedMessage' | translate }}</p>
+      } @else if (b.status === 'DISPUTED') {
+        <p class="message dispute">{{ 'booking.detail.disputedMessage' | translate }}</p>
+      } @else if (b.status === 'REFUNDED') {
+        <p class="message">{{ 'booking.detail.refundedMessage' | translate }}</p>
       } @else if (b.status === 'ESCROW_HELD') {
         <p class="confirmation-state">
           {{ 'booking.detail.studentConfirmed' | translate }}:
@@ -21,11 +25,18 @@
           {{ 'booking.detail.tutorConfirmed' | translate }}:
           {{ (b.tutorConfirmedAt ? 'booking.detail.yes' : 'booking.detail.no') | translate }}
         </p>
-        @if (canConfirm(b)) {
-          <button mat-flat-button color="primary" [disabled]="confirming()" (click)="confirm()">
-            {{ 'booking.detail.markComplete' | translate }}
-          </button>
-        }
+        <div class="actions">
+          @if (canConfirm(b)) {
+            <button mat-flat-button color="primary" [disabled]="confirming()" (click)="confirm()">
+              {{ 'booking.detail.markComplete' | translate }}
+            </button>
+          }
+          @if (canDispute(b)) {
+            <button mat-stroked-button color="warn" [disabled]="disputing()" (click)="dispute()">
+              {{ 'booking.detail.reportIssue' | translate }}
+            </button>
+          }
+        </div>
       }
     </mat-card>
   }

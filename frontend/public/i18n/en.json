@@ -115,11 +115,14 @@
         "REFUNDED": "Refunded"
       },
       "completedMessage": "Session completed — funds have been released to the tutor",
+      "disputedMessage": "This booking is under dispute — an admin will review it and decide the outcome",
+      "refundedMessage": "This booking was refunded to the student",
       "studentConfirmed": "Student confirmed",
       "tutorConfirmed": "Tutor confirmed",
       "yes": "Yes",
       "no": "Not yet",
-      "markComplete": "Mark session complete"
+      "markComplete": "Mark session complete",
+      "reportIssue": "Report an issue"
     }
   },
   "admin": {
@@ -131,6 +134,16 @@
       "rejectReason": "Rejection reason",
       "approveSuccess": "Document approved",
       "rejectSuccess": "Document rejected",
+      "actionError": "Action failed"
+    },
+    "disputes": {
+      "title": "Disputed bookings",
+      "empty": "No disputes to review",
+      "student": "Student",
+      "tutor": "Tutor",
+      "releaseToTutor": "Release to tutor",
+      "refundToStudent": "Refund to student",
+      "resolveSuccess": "Dispute resolved",
       "actionError": "Action failed"
     }
   }

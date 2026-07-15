@@ -30,3 +30,11 @@ Frontend coverage: 87.04% statements / 92.61% lines / 89.61% branches / 78.37% f
 Test rigor: Maximum (per Test Strategy risk assessment) - full adversarial checklist covered including a real concurrent-completion race test (two threads + DB pessimistic lock)
 CI: to be monitored after this session's push
 Security: no local gitleaks binary; manual review found no secrets, all SQL parameterized
+
+## SPRINT_SNAPSHOT — Sprint 4 (Booking & Escrow, complete: stories 4.1-4.4) — 2026-07-15
+Story 4.4 (dispute flow, admin-mediated) shipped, closing out Epic 4 in full.
+Backend coverage: 92.56% instructions / 86.36% branches (gate >=80% MET)
+Frontend coverage: 86.12% statements / 92.24% lines / 89.83% branches / 78.31% functions (gate >=80% statements/lines MET)
+Test rigor: Maximum - adversarial checklist fully covered across all 4 stories; the earlier session's flaky frontend test (tutor-profile-form timeout under load) did not recur on this run
+CI: to be monitored after this session's push
+Security: no local gitleaks binary; manual review found no secrets; dispute resolution reuses the existing ADMIN-role matcher, no new security surface

@@ -347,4 +347,44 @@ class BookingControllerIT {
         assertThat(escrowRows).hasSize(1);
         assertThat(escrowRows.get(0).getStatus()).isEqualTo(EscrowStatus.RELEASED);
     }
+
+    @Test
+    void party_canRaiseDispute_transitionsBookingToDisputed() throws Exception {
+        AuthedUser student = registerAndLogin("student-dispute@example.com", "STUDENT");
+        AuthedUser tutor = verifiedTutor("tutor-dispute@example.com", "100.00");
+        String gigId = createGig(student);
+        String bookingBody = objectMapper.writeValueAsString(Map.of(
+                "gigRequestId", gigId, "tutorUserId", tutor.userId().toString(), "durationHours", 1));
+        var result = mockMvc.perform(post("/api/v1/bookings")
+                        .header("Authorization", "Bearer " + student.token())
+                        .contentType("application/json")
+                        .content(bookingBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String bookingId = objectMapper.readTree(result.getResponse().getContentAsString()).get("id").asText();
+
+        mockMvc.perform(post("/api/v1/bookings/" + bookingId + "/dispute").header("Authorization", "Bearer " + tutor.token()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DISPUTED"));
+    }
+
+    @Test
+    void nonParty_cannotRaiseDispute() throws Exception {
+        AuthedUser student = registerAndLogin("student-dispute-idor@example.com", "STUDENT");
+        AuthedUser tutor = verifiedTutor("tutor-dispute-idor@example.com", "100.00");
+        AuthedUser outsider = registerAndLogin("student-dispute-outsider@example.com", "STUDENT");
+        String gigId = createGig(student);
+        String bookingBody = objectMapper.writeValueAsString(Map.of(
+                "gigRequestId", gigId, "tutorUserId", tutor.userId().toString(), "durationHours", 1));
+        var result = mockMvc.perform(post("/api/v1/bookings")
+                        .header("Authorization", "Bearer " + student.token())
+                        .contentType("application/json")
+                        .content(bookingBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String bookingId = objectMapper.readTree(result.getResponse().getContentAsString()).get("id").asText();
+
+        mockMvc.perform(post("/api/v1/bookings/" + bookingId + "/dispute").header("Authorization", "Bearer " + outsider.token()))
+                .andExpect(status().isForbidden());
+    }
 }

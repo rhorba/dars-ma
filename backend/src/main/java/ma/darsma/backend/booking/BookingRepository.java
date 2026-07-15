@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
     Optional<Booking> findByGigRequestId(UUID gigRequestId);
+
+    List<Booking> findByStatus(BookingStatus status);
 
     // Serializes concurrent completion attempts on the same booking (adversarial checklist:
     // both parties confirming simultaneously must transition to COMPLETED exactly once).
