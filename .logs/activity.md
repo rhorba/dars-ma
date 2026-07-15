@@ -187,3 +187,9 @@ Story 3.4 (match list UI + tutor browse/filter fallback) shipped:
 - Security: no local gitleaks binary available this session (consistent with sessions 3-4); manually reviewed all new/changed files — no secrets, no hardcoded credentials. All new backend queries use parameterized `@Param` bindings (no string-concatenated SQL) so no injection surface was introduced. New endpoints (GET matches, GET browse) reuse existing auth patterns (owner-check reuse, default authenticated-only), no new permitAll matchers added. Full gitleaks + Trivy scan deferred to CI per established project convention.
 - Test Strategy §4 adversarial checks for matching: "no candidate tutors -> graceful empty state not 500" covered by GigRequestControllerIT.getMatches_noCandidateTutors_returnsEmptyListNot500.
 Next: SHIP (push).
+
+## SHIP — Sprint 3 (2026-07-15, session 5)
+Pushed commit 6e39daa (batches 3-4) to origin/main, bundled with the already-committed-but-unpushed 5d8651b (batches 1-2) from the paused session 4.
+CI run 29397646647: RED - security job's gitleaks-action step failed with "unknown revision" trying to resolve `5d8651b^..6e39daa`. Root cause: actions/checkout@v4 defaults to fetch-depth 1 (shallow clone); this push carried 2 commits, and gitleaks-action's push-event diff range needs the full history to resolve the older commit's parent. backend-test and frontend-test both passed on the first attempt. Not a real secret leak - a CI infra gap (same class of issue as session 3's gitleaks:allow placement bug, different mechanism).
+Fix: added `fetch-depth: 0` to the security job's checkout step in .github/workflows/ci.yml so gitleaks-action always has full history to diff against, regardless of how many commits a push contains.
+Re-pushed; monitoring CI until green per rule 11.

@@ -34,7 +34,11 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
+      # gitleaks-action diffs across the pushed commit range; a shallow checkout can't
+      # resolve that range when a push contains more than one commit.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: returntocorp/semgrep-action@v1
         with:
           config: p/owasp-top-ten
