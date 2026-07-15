@@ -13,6 +13,7 @@ export class AuthService {
 
   readonly isAuthenticated = computed(() => this.decoded() !== null);
   readonly role = computed<Role | null>(() => this.decoded()?.role ?? null);
+  readonly userId = computed<string | null>(() => this.decoded()?.sub ?? null);
 
   constructor(private http: HttpClient) {}
 

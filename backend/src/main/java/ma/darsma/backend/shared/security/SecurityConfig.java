@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/profile/tutor/me", "/api/v1/profile/tutor/me/**").hasRole("TUTOR")
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/profile/tutor/*").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/gigs").hasRole("STUDENT")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/bookings").hasRole("STUDENT")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

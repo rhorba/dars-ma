@@ -1,0 +1,32 @@
+<div class="detail-page">
+  @if (loading()) {
+    <div class="skeleton-card"></div>
+  } @else if (error()) {
+    <p class="message error">{{ 'booking.detail.loadError' | translate }}</p>
+  } @else if (booking(); as b) {
+    <mat-card class="booking-card">
+      <p class="status" [class]="'status-' + b.status.toLowerCase()">
+        {{ ('booking.detail.status.' + b.status) | translate }}
+      </p>
+      <p class="price">{{ 'booking.detail.price' | translate }}: {{ b.agreedPriceMad }} MAD</p>
+
+      @if (b.status === 'COMPLETED') {
+        <p class="message success">{{ 'booking.detail.completedMessage' | translate }}</p>
+      } @else if (b.status === 'ESCROW_HELD') {
+        <p class="confirmation-state">
+          {{ 'booking.detail.studentConfirmed' | translate }}:
+          {{ (b.studentConfirmedAt ? 'booking.detail.yes' : 'booking.detail.no') | translate }}
+        </p>
+        <p class="confirmation-state">
+          {{ 'booking.detail.tutorConfirmed' | translate }}:
+          {{ (b.tutorConfirmedAt ? 'booking.detail.yes' : 'booking.detail.no') | translate }}
+        </p>
+        @if (canConfirm(b)) {
+          <button mat-flat-button color="primary" [disabled]="confirming()" (click)="confirm()">
+            {{ 'booking.detail.markComplete' | translate }}
+          </button>
+        }
+      }
+    </mat-card>
+  }
+</div>

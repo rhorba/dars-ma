@@ -87,7 +87,39 @@
       "browseAll": "Browse all tutors",
       "loadError": "Couldn't load matches, please try again",
       "retry": "Retry",
-      "matchScore": "Match"
+      "matchScore": "Match",
+      "book": "Book"
+    }
+  },
+  "booking": {
+    "confirm": {
+      "title": "Confirm booking",
+      "hourlyRate": "Hourly rate",
+      "duration": "Session duration (hours)",
+      "durationError": "Duration must be between 0.5 and 12 hours",
+      "estimatedPrice": "Estimated price",
+      "submit": "Confirm and pay",
+      "submitError": "Could not create the booking — the tutor or gig may no longer be available",
+      "tutorNotFound": "Tutor not found"
+    },
+    "detail": {
+      "loadError": "Couldn't load this booking",
+      "price": "Price",
+      "status": {
+        "PENDING_PAYMENT": "Payment pending",
+        "ESCROW_HELD": "Payment held in escrow",
+        "COMPLETED_STUDENT": "Awaiting tutor confirmation",
+        "COMPLETED_TUTOR": "Awaiting student confirmation",
+        "COMPLETED": "Completed",
+        "DISPUTED": "Disputed",
+        "REFUNDED": "Refunded"
+      },
+      "completedMessage": "Session completed — funds have been released to the tutor",
+      "studentConfirmed": "Student confirmed",
+      "tutorConfirmed": "Tutor confirmed",
+      "yes": "Yes",
+      "no": "Not yet",
+      "markComplete": "Mark session complete"
     }
   },
   "admin": {

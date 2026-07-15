@@ -87,7 +87,39 @@
       "browseAll": "Parcourir tous les tuteurs",
       "loadError": "Impossible de charger les correspondances, veuillez réessayer",
       "retry": "Réessayer",
-      "matchScore": "Correspondance"
+      "matchScore": "Correspondance",
+      "book": "Réserver"
+    }
+  },
+  "booking": {
+    "confirm": {
+      "title": "Confirmer la réservation",
+      "hourlyRate": "Tarif horaire",
+      "duration": "Durée de la séance (heures)",
+      "durationError": "La durée doit être comprise entre 0,5 et 12 heures",
+      "estimatedPrice": "Prix estimé",
+      "submit": "Confirmer et payer",
+      "submitError": "Impossible de créer la réservation — le tuteur ou la demande n'est peut-être plus disponible",
+      "tutorNotFound": "Tuteur introuvable"
+    },
+    "detail": {
+      "loadError": "Impossible de charger cette réservation",
+      "price": "Prix",
+      "status": {
+        "PENDING_PAYMENT": "Paiement en attente",
+        "ESCROW_HELD": "Paiement retenu en séquestre",
+        "COMPLETED_STUDENT": "En attente de confirmation du tuteur",
+        "COMPLETED_TUTOR": "En attente de confirmation de l'étudiant",
+        "COMPLETED": "Terminée",
+        "DISPUTED": "En litige",
+        "REFUNDED": "Remboursée"
+      },
+      "completedMessage": "Séance terminée — les fonds ont été versés au tuteur",
+      "studentConfirmed": "Étudiant confirmé",
+      "tutorConfirmed": "Tuteur confirmé",
+      "yes": "Oui",
+      "no": "Pas encore",
+      "markComplete": "Marquer la séance comme terminée"
     }
   },
   "admin": {

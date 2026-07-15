@@ -24,15 +24,20 @@
     } @else {
       <div class="match-list">
         @for (match of matches(); track match.tutorUserId) {
-          <mat-card class="match-card" [routerLink]="['/profile/tutor', match.tutorUserId]">
-            @if (match.tutor; as tutor) {
-              <p class="subjects">{{ tutor.subjects.join(', ') }}</p>
-              <p class="rate">{{ tutor.hourlyRateMad }} MAD/h</p>
-              @if (tutor.avgRating !== null) {
-                <p class="rating">{{ 'profile.tutor.rating' | translate }}: {{ tutor.avgRating }}</p>
+          <mat-card class="match-card">
+            <a class="match-card-link" [routerLink]="['/profile/tutor', match.tutorUserId]">
+              @if (match.tutor; as tutor) {
+                <p class="subjects">{{ tutor.subjects.join(', ') }}</p>
+                <p class="rate">{{ tutor.hourlyRateMad }} MAD/h</p>
+                @if (tutor.avgRating !== null) {
+                  <p class="rating">{{ 'profile.tutor.rating' | translate }}: {{ tutor.avgRating }}</p>
+                }
               }
-            }
-            <p class="score">{{ 'gig.detail.matchScore' | translate }}: {{ (match.similarityScore * 100).toFixed(0) }}%</p>
+              <p class="score">{{ 'gig.detail.matchScore' | translate }}: {{ (match.similarityScore * 100).toFixed(0) }}%</p>
+            </a>
+            <a mat-flat-button color="primary" [routerLink]="['/gigs', g.id, 'book', match.tutorUserId]">
+              {{ 'gig.detail.book' | translate }}
+            </a>
           </mat-card>
         }
       </div>

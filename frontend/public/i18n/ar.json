@@ -87,7 +87,39 @@
       "browseAll": "تصفح جميع الأساتذة",
       "loadError": "تعذر تحميل التطابقات، حاول مرة أخرى",
       "retry": "إعادة المحاولة",
-      "matchScore": "نسبة التوافق"
+      "matchScore": "نسبة التوافق",
+      "book": "حجز"
+    }
+  },
+  "booking": {
+    "confirm": {
+      "title": "تأكيد الحجز",
+      "hourlyRate": "السعر بالساعة",
+      "duration": "مدة الجلسة (ساعات)",
+      "durationError": "يجب أن تكون المدة بين 0.5 و 12 ساعة",
+      "estimatedPrice": "السعر التقديري",
+      "submit": "تأكيد والدفع",
+      "submitError": "تعذر إنشاء الحجز — قد لا يكون الأستاذ أو الطلب متاحًا بعد الآن",
+      "tutorNotFound": "الأستاذ غير موجود"
+    },
+    "detail": {
+      "loadError": "تعذر تحميل هذا الحجز",
+      "price": "السعر",
+      "status": {
+        "PENDING_PAYMENT": "الدفع قيد الانتظار",
+        "ESCROW_HELD": "الدفع محتجز في الضمان",
+        "COMPLETED_STUDENT": "في انتظار تأكيد الأستاذ",
+        "COMPLETED_TUTOR": "في انتظار تأكيد الطالب",
+        "COMPLETED": "مكتملة",
+        "DISPUTED": "متنازع عليها",
+        "REFUNDED": "مستردة"
+      },
+      "completedMessage": "اكتملت الجلسة — تم تحويل الأموال إلى الأستاذ",
+      "studentConfirmed": "تأكيد الطالب",
+      "tutorConfirmed": "تأكيد الأستاذ",
+      "yes": "نعم",
+      "no": "ليس بعد",
+      "markComplete": "وضع علامة اكتمال الجلسة"
     }
   },
   "admin": {

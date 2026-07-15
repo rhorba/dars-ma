@@ -1,0 +1,29 @@
+.confirm-page {
+  padding: 32px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.confirm-card {
+  padding: 16px;
+}
+
+.skeleton-card {
+  height: 120px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.price-preview {
+  font-weight: 600;
+}
+
+.message.error {
+  padding: 8px 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

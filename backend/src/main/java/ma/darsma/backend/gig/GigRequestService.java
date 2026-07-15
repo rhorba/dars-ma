@@ -54,4 +54,10 @@ public class GigRequestService {
         }
         return gigRequest;
     }
+
+    @Transactional
+    public void markMatched(GigRequest gigRequest) {
+        gigRequest.setStatus(GigStatus.MATCHED);
+        gigRequestRepository.save(gigRequest);
+    }
 }

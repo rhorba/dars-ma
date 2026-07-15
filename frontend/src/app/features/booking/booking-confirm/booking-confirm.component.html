@@ -1,0 +1,35 @@
+<div class="confirm-page">
+  <mat-card class="confirm-card">
+    <h1>{{ 'booking.confirm.title' | translate }}</h1>
+
+    @if (loading()) {
+      <div class="skeleton-card"></div>
+    } @else if (tutor(); as t) {
+      <p class="rate">{{ 'booking.confirm.hourlyRate' | translate }}: {{ t.hourlyRateMad }} MAD/h</p>
+
+      @if (errorMessageKey()) {
+        <p class="message error">{{ errorMessageKey() | translate }}</p>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'booking.confirm.duration' | translate }}</mat-label>
+          <input matInput type="number" step="0.5" formControlName="durationHours" />
+          @if (form.controls.durationHours.invalid && form.controls.durationHours.touched) {
+            <mat-error>{{ 'booking.confirm.durationError' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (estimatedPrice(); as price) {
+          <p class="price-preview">{{ 'booking.confirm.estimatedPrice' | translate }}: {{ price }} MAD</p>
+        }
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+          {{ 'booking.confirm.submit' | translate }}
+        </button>
+      </form>
+    } @else {
+      <p class="message error">{{ 'booking.confirm.tutorNotFound' | translate }}</p>
+    }
+  </mat-card>
+</div>

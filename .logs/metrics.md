@@ -22,3 +22,11 @@ Backend coverage: 90.44% instructions / 79.41% branches (JaCoCo, gate >=80% inst
 Frontend coverage: 87.31% statements / 92.71% lines / 89.51% branches / 77.86% functions (Vitest v8, gate >=80% statements/lines MET)
 CI: to be monitored after this session's push per DevOps CI Monitoring Protocol
 Security: no local gitleaks binary available (consistent with sessions 3-4); manual diff review found no secrets; all new SQL is parameterized. Full scan deferred to CI.
+
+## SPRINT_SNAPSHOT — Sprint 4 (Booking & Escrow, batches 1-3: stories 4.1-4.3) — 2026-07-15
+Stories completed: 4.1 (EscrowPaymentProvider + Mock), 4.2 (create booking + escrow hold), 4.3 (mutual completion + escrow release). Story 4.4 (dispute) deferred to Sprint 5.
+Backend coverage: 92.17% instructions / 83.67% branches (gate >=80% MET)
+Frontend coverage: 87.04% statements / 92.61% lines / 89.61% branches / 78.37% functions (gate >=80% statements/lines MET)
+Test rigor: Maximum (per Test Strategy risk assessment) - full adversarial checklist covered including a real concurrent-completion race test (two threads + DB pessimistic lock)
+CI: to be monitored after this session's push
+Security: no local gitleaks binary; manual review found no secrets, all SQL parameterized

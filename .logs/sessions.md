@@ -35,3 +35,15 @@ Sprint 3 (Gigs & Matching) in progress, paused mid-sprint by user request. Batch
 Not started: Batch 3 (Story 3.3, pgvector match suggestions + thin-pool fallback) and Batch 4 (Story 3.4, match list UI + browse/filter fallback).
 No push yet this session - sprint isn't complete (rule 7 triggers at sprint SHIP, not mid-sprint); work checkpointed with a local commit only.
 Next: Resume with Batch 3 (matching service: top-N cosine similarity query via pgvector, fallback to subject-filter search below a tutor-count threshold, GET /api/v1/gigs/:id/matches), then Batch 4, then Sprint 3 VERIFY/SHIP (coverage check, push, log).
+
+## SESSION_START — 2026-07-15 (session 5)
+Resuming from session 4 SESSION_END. Sprint 3 paused mid-sprint after batches 1-2. Starting with Batch 3 (Story 3.3, pgvector matching + fallback).
+
+## SESSION_END — 2026-07-15 (session 5)
+Sprint 3 (Gigs & Matching) fully shipped - all 4 stories complete:
+- Batch 3 (Story 3.3): V009 migration (match_suggestions), MatchingService with THIN_POOL_THRESHOLD=5/TOP_N=10 (implementation defaults, not specified in docs - chosen and logged rather than routed to a full BRAINSTORM), pgvector cosine-similarity native query with subject-filter fallback below the threshold, GET /api/v1/gigs/:id/matches.
+- Batch 4 (Story 3.4): GET /api/v1/profile/tutor browse endpoint (new - needed for the "browse all tutors" fallback, didn't exist before), GigDetailComponent (/gigs/:id, ranked match cards, skeleton/error/empty states), TutorBrowseComponent (/tutors, subject filter), "View gig" link added to the gig-create success message.
+- VERIFY: backend `mvn verify` 90.44% instructions / 79.41% branches, frontend `ng test --coverage` 87.31% statements / 92.71% lines - both clear the 80% gate. No local gitleaks binary (consistent with sessions 3-4); manual diff review found no secrets, all new SQL parameterized.
+- SHIP: pushed commit 6e39daa (bundled with the already-committed 5d8651b from the paused session 4). First CI run (29397646647) went RED - gitleaks-action failed to resolve a commit range because actions/checkout@v4's default shallow clone (depth 1) can't diff across a multi-commit push. Fixed by adding fetch-depth: 0 to the security job's checkout step (.github/workflows/ci.yml), pushed as commit 91f88d2. Re-run (29400076128): GREEN across all 4 jobs.
+Decisions to remember: MatchingService.THIN_POOL_THRESHOLD/TOP_N are implementation constants (5/10), not in any doc - revisit if match quality complaints surface. CI now always fetches full history for the security job, not just this push's diff.
+Next: Sprint 4 (Booking & Escrow, Epic 4) - highest-risk epic per Test Strategy (Maximum rigor: idempotency, race conditions, IDOR, price tampering). Start with Story 4.1 (EscrowPaymentProvider interface + Mock implementation).
