@@ -19,3 +19,8 @@ export interface GigRequestCreateRequest {
   budgetMinMad: number | null;
   budgetMaxMad: number | null;
 }
+
+export interface MatchSuggestion {
+  tutorUserId: string;
+  similarityScore: number;
+}

@@ -54,6 +54,14 @@
       },
       "rating": "Rating",
       "notFound": "Tutor profile not found"
+    },
+    "browse": {
+      "title": "Browse tutors",
+      "filterBySubject": "Filter by subject",
+      "filter": "Filter",
+      "empty": "No tutors found",
+      "loadError": "Couldn't load tutors, please try again",
+      "retry": "Retry"
     }
   },
   "gig": {
@@ -70,7 +78,16 @@
       "budgetRangeError": "Minimum budget must not exceed maximum budget",
       "submit": "Post gig",
       "success": "Gig posted — we'll show matched tutors shortly",
-      "submitError": "Could not post gig, please check the form and try again"
+      "submitError": "Could not post gig, please check the form and try again",
+      "viewGig": "View gig"
+    },
+    "detail": {
+      "matchesTitle": "Matched tutors",
+      "noMatches": "No matches yet — we'll notify you when a tutor fits",
+      "browseAll": "Browse all tutors",
+      "loadError": "Couldn't load matches, please try again",
+      "retry": "Retry",
+      "matchScore": "Match"
     }
   },
   "admin": {

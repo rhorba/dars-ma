@@ -1,0 +1,36 @@
+<div class="browse-page">
+  <h1>{{ 'profile.browse.title' | translate }}</h1>
+
+  <div class="filter-bar">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'profile.browse.filterBySubject' | translate }}</mat-label>
+      <input matInput [(ngModel)]="subjectFilter" (keyup.enter)="load()" />
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="load()">{{ 'profile.browse.filter' | translate }}</button>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton-list">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    </div>
+  } @else if (error()) {
+    <p class="message error">{{ 'profile.browse.loadError' | translate }}</p>
+    <button mat-stroked-button (click)="load()">{{ 'profile.browse.retry' | translate }}</button>
+  } @else if (tutors().length === 0) {
+    <p class="empty">{{ 'profile.browse.empty' | translate }}</p>
+  } @else {
+    <div class="tutor-list">
+      @for (tutor of tutors(); track tutor.userId) {
+        <mat-card class="tutor-card" [routerLink]="['/profile/tutor', tutor.userId]">
+          <p class="subjects">{{ tutor.subjects.join(', ') }}</p>
+          <p class="rate">{{ tutor.hourlyRateMad }} MAD/h</p>
+          @if (tutor.avgRating !== null) {
+            <p class="rating">{{ 'profile.tutor.rating' | translate }}: {{ tutor.avgRating }}</p>
+          }
+        </mat-card>
+      }
+    </div>
+  }
+</div>

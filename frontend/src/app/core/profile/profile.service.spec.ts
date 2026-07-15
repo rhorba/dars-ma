@@ -57,4 +57,18 @@ describe('ProfileService', () => {
     expect(req.request.body instanceof FormData).toBe(true);
     req.flush({ id: 'doc-1', docType: 'DIPLOMA', originalFilename: 'diploma.pdf', reviewedAt: null, createdAt: '2026-01-01T00:00:00Z' });
   });
+
+  it('browseTutors() GETs /api/v1/profile/tutor without params when no subject given', () => {
+    service.browseTutors().subscribe((tutors) => expect(tutors).toEqual([sampleProfile]));
+    const req = httpMock.expectOne('/api/v1/profile/tutor');
+    expect(req.request.method).toBe('GET');
+    req.flush([sampleProfile]);
+  });
+
+  it('browseTutors() GETs /api/v1/profile/tutor with a subject query param', () => {
+    service.browseTutors('Math').subscribe();
+    const req = httpMock.expectOne('/api/v1/profile/tutor?subject=Math');
+    expect(req.request.method).toBe('GET');
+    req.flush([sampleProfile]);
+  });
 });

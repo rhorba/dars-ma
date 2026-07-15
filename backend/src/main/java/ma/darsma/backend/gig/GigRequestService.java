@@ -2,6 +2,7 @@ package ma.darsma.backend.gig;
 
 import ma.darsma.backend.gig.dto.GigRequestCreateRequest;
 import ma.darsma.backend.matching.EmbeddingService;
+import ma.darsma.backend.matching.MatchingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,10 +18,12 @@ public class GigRequestService {
 
     private final GigRequestRepository gigRequestRepository;
     private final EmbeddingService embeddingService;
+    private final MatchingService matchingService;
 
-    public GigRequestService(GigRequestRepository gigRequestRepository, EmbeddingService embeddingService) {
+    public GigRequestService(GigRequestRepository gigRequestRepository, EmbeddingService embeddingService, MatchingService matchingService) {
         this.gigRequestRepository = gigRequestRepository;
         this.embeddingService = embeddingService;
+        this.matchingService = matchingService;
     }
 
     @Transactional
@@ -39,6 +42,7 @@ public class GigRequestService {
                 .build();
         GigRequest saved = gigRequestRepository.save(gigRequest);
         embeddingService.embedGigRequest(saved);
+        matchingService.generateMatches(saved);
         return saved;
     }
 

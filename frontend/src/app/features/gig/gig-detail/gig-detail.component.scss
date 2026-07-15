@@ -1,0 +1,33 @@
+.gig-detail-page {
+  padding: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.gig-summary {
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.match-list,
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.match-card {
+  cursor: pointer;
+  padding: 16px;
+}
+
+.skeleton-card {
+  height: 80px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.empty,
+.message.error {
+  padding: 16px 0;
+}

@@ -153,3 +153,37 @@ Story 3.2 (embedding generation) shipped:
 - Tests: EmbeddingServiceTest (unit), TutorProfileServiceTest/GigRequestServiceTest updated for new constructor dep + embed-called assertions, TutorProfileControllerIT/GigRequestControllerIT extended to assert real pgvector round-trip (384-dim) via Testcontainers, LocalMultilingualEmbeddingProviderIT (tagged real-model, validates real model + cross-language cosine similarity) - excluded from CI's default `mvn verify` since it depends on a huggingface.co download; run manually via `mvn verify -DexcludedGroups=` to validate
 - Full `mvn verify` green: all unit + integration tests pass, coverage gate met, real-model test correctly skipped
 Known follow-up: real-model IT is not part of CI gate by design (external network dependency) - documented in pom.xml comment.
+
+## EXECUTE — Sprint 3 Batch 3 complete (2026-07-15, session 5)
+Story 3.3 (pgvector match suggestions + thin-pool fallback) shipped:
+- V009 migration: match_suggestions table (gig_request_id, tutor_user_id, similarity_score, unique per gig+tutor), per docs/database-dars-ma.md schema
+- MatchSuggestion entity + repository; TutorMatchRow projection for native query results
+- MatchingService: THIN_POOL_THRESHOLD=5 verified+embedded tutors, TOP_N=10 — neither value was specified in docs (architecture doc only says "minimum tutor-count threshold" without a number), chosen as reasonable defaults and logged here rather than routed to BRAINSTORM since it's an implementation-level constant, not an architectural tradeoff
+  - Healthy pool: native pgvector query (`embedding <=> CAST(:vector AS vector)`, vector text built via PGvector.toString()) joined against tutor_profiles filtered to VERIFIED, cosine similarity = 1 - distance
+  - Thin pool: falls back to tutor_profiles subject-array match (`:subject = ANY(subjects)`) among VERIFIED tutors, ordered by avg_rating; similarity_score stored as 0.0000 to mark "not vector-ranked"
+  - generateMatches() deletes existing suggestions for the gig first (idempotent regeneration)
+- Wired into GigRequestService.create (runs synchronously right after embedding generation, matching UX Flow 1: publish -> match -> list)
+- GET /api/v1/gigs/{id}/matches (owner-only, reuses existing getForOwner ownership check) + MatchSuggestionResponse DTO (tutorUserId, similarityScore) — kept minimal, Frontend Dev (Batch 4) can call the existing public tutor-profile endpoint per match if more detail is needed
+- Tests: MatchingServiceTest (unit, mocked repos: thin-pool fallback, healthy-pool vector path, missing-gig-embedding failure, getMatches passthrough), GigRequestServiceTest updated for new constructor dep, GigRequestControllerIT +3 tests (thin-pool fallback match returned, no-candidate-tutors returns empty list not 500 per Test Strategy §4 adversarial check, non-owner forbidden)
+- Full `mvn verify`: BUILD SUCCESS, 27 integration tests + unit suite all green, coverage 90.37% instructions / 79.69% branches (gate: 80% combined, met)
+No local gitleaks binary this session either (same as session 3) - manual review of the diff found no secrets; native queries are fully parameterized (@Param bindings), no string-concatenated SQL, so no injection risk introduced. Full gitleaks pass deferred to CI per established convention.
+Next: Batch 4 (Story 3.4, match list UI + tutor browse/filter fallback) - Frontend Dev - then Sprint 3 VERIFY/SHIP (frontend coverage check, push).
+
+## EXECUTE — Sprint 3 Batch 4 complete (2026-07-15, session 5)
+Story 3.4 (match list UI + tutor browse/filter fallback) shipped:
+- Backend addition (small, needed to support the "browse all tutors" fallback link — no browse-all endpoint existed yet): GET /api/v1/profile/tutor (optional ?subject= filter) added to TutorProfileController/Service/Repository, returns VERIFIED tutors ordered by avg_rating desc nulls-last. Auth-only (falls through SecurityConfig's anyRequest().authenticated(), no new matcher needed — no anonymous browsing requirement in scope).
+- Frontend: GigService.getMatches(), ProfileService.browseTutors() added
+- New GigDetailComponent (route /gigs/:id, authGuard): loads the gig + its match_suggestions, enriches each with the tutor's public profile (forkJoin, per UX Flow 1's ranked-cards requirement), skeleton-loading / error-retry / empty-state-with-browse-all-link states per UX §5 screen states
+- New TutorBrowseComponent (route /tutors, authGuard): lists VERIFIED tutors with an optional subject filter, same loading/error/empty states — serves as both the browse-all fallback destination and Story 3.4's own "browse/filter fallback" AC
+- GigCreateFormComponent: added a "View gig" link to the existing success message (routerLink to /gigs/:id) closing the loop from UX Flow 1 (publish -> match -> list) without changing existing tested behavior
+- i18n: profile.browse.* and gig.detail.*/gig.create.viewGig keys added to en/fr/ar
+- Tests: gig.service.spec/profile.service.spec extended, new gig-detail.component.spec.ts + tutor-browse.component.spec.ts, backend TutorProfileServiceTest/TutorProfileControllerIT extended for the browse endpoint (verified-only filtering, subject filter, unauthenticated 403)
+- Full frontend `ng test --coverage`: 17 files / 64 tests green, statements 87.31%, branches 89.51%, lines 92.71% (functions 77.86% — not historically the gating metric per Sprint 1-2 convention, statements/lines both clear 80%)
+- Backend `mvn verify` re-run clean after the browse-endpoint addition: 29 integration tests + full unit suite green, jacoco-check passed, instructions 90.44% / branches 79.41%
+
+## VERIFY — Sprint 3 (2026-07-15, session 5)
+- Backend: `mvn verify` BUILD SUCCESS, 29 IT + unit suite green, coverage 90.44% instructions / 79.41% branches, jacoco-check gate passed
+- Frontend: `ng test --coverage` 17 files / 64 tests green, 87.31% statements / 92.71% lines / 89.51% branches
+- Security: no local gitleaks binary available this session (consistent with sessions 3-4); manually reviewed all new/changed files — no secrets, no hardcoded credentials. All new backend queries use parameterized `@Param` bindings (no string-concatenated SQL) so no injection surface was introduced. New endpoints (GET matches, GET browse) reuse existing auth patterns (owner-check reuse, default authenticated-only), no new permitAll matchers added. Full gitleaks + Trivy scan deferred to CI per established project convention.
+- Test Strategy §4 adversarial checks for matching: "no candidate tutors -> graceful empty state not 500" covered by GigRequestControllerIT.getMatches_noCandidateTutors_returnsEmptyListNot500.
+Next: SHIP (push).

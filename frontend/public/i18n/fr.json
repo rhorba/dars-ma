@@ -54,6 +54,14 @@
       },
       "rating": "Note",
       "notFound": "Profil tuteur introuvable"
+    },
+    "browse": {
+      "title": "Parcourir les tuteurs",
+      "filterBySubject": "Filtrer par matière",
+      "filter": "Filtrer",
+      "empty": "Aucun tuteur trouvé",
+      "loadError": "Impossible de charger les tuteurs, veuillez réessayer",
+      "retry": "Réessayer"
     }
   },
   "gig": {
@@ -70,7 +78,16 @@
       "budgetRangeError": "Le budget minimum ne doit pas dépasser le budget maximum",
       "submit": "Publier",
       "success": "Demande publiée — les tuteurs correspondants s'afficheront bientôt",
-      "submitError": "Impossible de publier la demande, vérifiez le formulaire et réessayez"
+      "submitError": "Impossible de publier la demande, vérifiez le formulaire et réessayez",
+      "viewGig": "Voir la demande"
+    },
+    "detail": {
+      "matchesTitle": "Tuteurs correspondants",
+      "noMatches": "Pas encore de correspondance — nous vous préviendrons dès qu'un tuteur convient",
+      "browseAll": "Parcourir tous les tuteurs",
+      "loadError": "Impossible de charger les correspondances, veuillez réessayer",
+      "retry": "Réessayer",
+      "matchScore": "Correspondance"
     }
   },
   "admin": {

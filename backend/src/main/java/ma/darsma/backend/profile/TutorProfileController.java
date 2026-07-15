@@ -6,6 +6,7 @@ import ma.darsma.backend.profile.dto.TutorProfileResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -33,5 +34,10 @@ public class TutorProfileController {
     @GetMapping("/{userId}")
     public TutorProfileResponse getPublic(@PathVariable UUID userId) {
         return TutorProfileResponse.from(tutorProfileService.getByUserId(userId));
+    }
+
+    @GetMapping
+    public List<TutorProfileResponse> browse(@RequestParam(required = false) String subject) {
+        return tutorProfileService.browseVerified(subject).stream().map(TutorProfileResponse::from).toList();
     }
 }

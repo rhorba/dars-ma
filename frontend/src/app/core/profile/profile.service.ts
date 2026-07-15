@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DocType, TutorProfile, TutorProfileRequest, VerificationDocument } from './profile.models';
 
@@ -24,5 +24,10 @@ export class ProfileService {
     formData.append('docType', docType);
     formData.append('file', file);
     return this.http.post<VerificationDocument>('/api/v1/profile/tutor/me/verification-documents', formData);
+  }
+
+  browseTutors(subject?: string): Observable<TutorProfile[]> {
+    const params = subject ? new HttpParams().set('subject', subject) : undefined;
+    return this.http.get<TutorProfile[]>('/api/v1/profile/tutor', { params });
   }
 }

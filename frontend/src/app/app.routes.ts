@@ -34,6 +34,18 @@ export const routes: Routes = [
     canActivate: [roleGuard(['STUDENT'])]
   },
   {
+    path: 'gigs/:id',
+    loadComponent: () =>
+      import('./features/gig/gig-detail/gig-detail.component').then((m) => m.GigDetailComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'tutors',
+    loadComponent: () =>
+      import('./features/profile/tutor-browse/tutor-browse.component').then((m) => m.TutorBrowseComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'admin/verification',
     loadComponent: () =>
       import('./features/admin/verification-queue/verification-queue.component').then(

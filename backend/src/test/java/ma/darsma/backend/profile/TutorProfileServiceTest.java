@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,5 +75,29 @@ class TutorProfileServiceTest {
         assertThatThrownBy(() -> tutorProfileService.getByUserId(tutorId))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("not found");
+    }
+
+    @Test
+    void browseVerified_withoutSubject_listsAllVerified() {
+        TutorProfile profile = TutorProfile.builder().userId(UUID.randomUUID()).subjects(new String[]{"Math"})
+                .hourlyRateMad(BigDecimal.TEN).verificationStatus(VerificationStatus.VERIFIED).build();
+        when(tutorProfileRepository.findAllVerified()).thenReturn(List.of(profile));
+
+        List<TutorProfile> result = tutorProfileService.browseVerified(null);
+
+        assertThat(result).containsExactly(profile);
+        verify(tutorProfileRepository, never()).findVerifiedBySubject(any());
+    }
+
+    @Test
+    void browseVerified_withSubject_filtersBySubject() {
+        TutorProfile profile = TutorProfile.builder().userId(UUID.randomUUID()).subjects(new String[]{"Math"})
+                .hourlyRateMad(BigDecimal.TEN).verificationStatus(VerificationStatus.VERIFIED).build();
+        when(tutorProfileRepository.findVerifiedBySubject("Math")).thenReturn(List.of(profile));
+
+        List<TutorProfile> result = tutorProfileService.browseVerified("Math");
+
+        assertThat(result).containsExactly(profile);
+        verify(tutorProfileRepository, never()).findAllVerified();
     }
 }

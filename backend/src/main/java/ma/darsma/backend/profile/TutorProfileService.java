@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -36,5 +37,11 @@ public class TutorProfileService {
     public TutorProfile getByUserId(UUID tutorUserId) {
         return tutorProfileRepository.findById(tutorUserId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Tutor profile not found"));
+    }
+
+    public List<TutorProfile> browseVerified(String subject) {
+        return subject == null || subject.isBlank()
+                ? tutorProfileRepository.findAllVerified()
+                : tutorProfileRepository.findVerifiedBySubject(subject);
     }
 }

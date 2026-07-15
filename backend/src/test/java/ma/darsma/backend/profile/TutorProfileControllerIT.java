@@ -52,6 +52,9 @@ class TutorProfileControllerIT {
     @Autowired
     private TutorEmbeddingRepository tutorEmbeddingRepository;
 
+    @Autowired
+    private TutorProfileRepository tutorProfileRepository;
+
     private String registerAndLogin(String email, String role) throws Exception {
         String registerBody = objectMapper.writeValueAsString(Map.of(
                 "email", email, "password", "supersecret1", "role", role, "fullName", "Test User"));
@@ -138,5 +141,48 @@ class TutorProfileControllerIT {
     void publicView_returns404ForUnknownTutor() throws Exception {
         mockMvc.perform(get("/api/v1/profile/tutor/" + java.util.UUID.randomUUID()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void browse_onlyReturnsVerifiedTutors_optionallyFilteredBySubject() throws Exception {
+        String verifiedTutorToken = registerAndLogin("tutor-browse-verified@example.com", "TUTOR");
+        String verifiedBody = """
+                {"bio":"Bio","subjects":["Math"],"hourlyRateMad":120.00}
+                """;
+        var verifiedResult = mockMvc.perform(put("/api/v1/profile/tutor/me")
+                        .header("Authorization", "Bearer " + verifiedTutorToken)
+                        .contentType("application/json")
+                        .content(verifiedBody))
+                .andExpect(status().isOk())
+                .andReturn();
+        UUID verifiedUserId = UUID.fromString(objectMapper.readTree(verifiedResult.getResponse().getContentAsString()).get("userId").asText());
+        var verifiedProfile = tutorProfileRepository.findById(verifiedUserId).orElseThrow();
+        verifiedProfile.setVerificationStatus(VerificationStatus.VERIFIED);
+        tutorProfileRepository.save(verifiedProfile);
+
+        String pendingTutorToken = registerAndLogin("tutor-browse-pending@example.com", "TUTOR");
+        String pendingBody = """
+                {"bio":"Bio","subjects":["Math"],"hourlyRateMad":90.00}
+                """;
+        mockMvc.perform(put("/api/v1/profile/tutor/me")
+                        .header("Authorization", "Bearer " + pendingTutorToken)
+                        .contentType("application/json")
+                        .content(pendingBody))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/v1/profile/tutor").header("Authorization", "Bearer " + verifiedTutorToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].userId").value(verifiedUserId.toString()));
+
+        mockMvc.perform(get("/api/v1/profile/tutor").param("subject", "Physics").header("Authorization", "Bearer " + verifiedTutorToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    void browse_unauthenticated_isForbidden() throws Exception {
+        mockMvc.perform(get("/api/v1/profile/tutor"))
+                .andExpect(status().isForbidden());
     }
 }

@@ -2,8 +2,9 @@
   <mat-card class="gig-card">
     <h1>{{ 'gig.create.title' | translate }}</h1>
 
-    @if (createdGig()) {
+    @if (createdGig(); as g) {
       <p class="message success">{{ 'gig.create.success' | translate }}</p>
+      <a mat-flat-button color="primary" [routerLink]="['/gigs', g.id]">{{ 'gig.create.viewGig' | translate }}</a>
     }
     @if (errorMessageKey()) {
       <p class="message error">{{ errorMessageKey() | translate }}</p>

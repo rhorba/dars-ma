@@ -2,6 +2,8 @@ package ma.darsma.backend.gig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.darsma.backend.matching.GigEmbeddingRepository;
+import ma.darsma.backend.profile.TutorProfileRepository;
+import ma.darsma.backend.profile.VerificationStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +22,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,6 +53,9 @@ class GigRequestControllerIT {
 
     @Autowired
     private GigEmbeddingRepository gigEmbeddingRepository;
+
+    @Autowired
+    private TutorProfileRepository tutorProfileRepository;
 
     private String registerAndLogin(String email, String role) throws Exception {
         String registerBody = objectMapper.writeValueAsString(Map.of(
@@ -160,5 +166,78 @@ class GigRequestControllerIT {
         String token = registerAndLogin("student-gig-404@example.com", "STUDENT");
         mockMvc.perform(get("/api/v1/gigs/" + UUID.randomUUID()).header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getMatches_thinPool_returnsSubjectFallbackMatch() throws Exception {
+        String tutorToken = registerAndLogin("tutor-matches@example.com", "TUTOR");
+        String tutorBody = """
+                {"bio":"Experienced","subjects":["Math"],"hourlyRateMad":100.00}
+                """;
+        var profileResult = mockMvc.perform(put("/api/v1/profile/tutor/me")
+                        .header("Authorization", "Bearer " + tutorToken)
+                        .contentType("application/json")
+                        .content(tutorBody))
+                .andExpect(status().isOk())
+                .andReturn();
+        UUID tutorUserId = UUID.fromString(objectMapper.readTree(profileResult.getResponse().getContentAsString()).get("userId").asText());
+        var tutorProfile = tutorProfileRepository.findById(tutorUserId).orElseThrow();
+        tutorProfile.setVerificationStatus(VerificationStatus.VERIFIED);
+        tutorProfileRepository.save(tutorProfile);
+
+        String studentToken = registerAndLogin("student-matches@example.com", "STUDENT");
+        String gigBody = """
+                {"subject":"Math","level":"High School","description":"Need help with calculus"}
+                """;
+        var createResult = mockMvc.perform(post("/api/v1/gigs")
+                        .header("Authorization", "Bearer " + studentToken)
+                        .contentType("application/json")
+                        .content(gigBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String gigId = objectMapper.readTree(createResult.getResponse().getContentAsString()).get("id").asText();
+
+        mockMvc.perform(get("/api/v1/gigs/" + gigId + "/matches").header("Authorization", "Bearer " + studentToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].tutorUserId").value(tutorUserId.toString()));
+    }
+
+    @Test
+    void getMatches_noCandidateTutors_returnsEmptyListNot500() throws Exception {
+        String studentToken = registerAndLogin("student-matches-empty@example.com", "STUDENT");
+        String gigBody = """
+                {"subject":"Physics","level":"High School","description":"Need help with mechanics"}
+                """;
+        var createResult = mockMvc.perform(post("/api/v1/gigs")
+                        .header("Authorization", "Bearer " + studentToken)
+                        .contentType("application/json")
+                        .content(gigBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String gigId = objectMapper.readTree(createResult.getResponse().getContentAsString()).get("id").asText();
+
+        mockMvc.perform(get("/api/v1/gigs/" + gigId + "/matches").header("Authorization", "Bearer " + studentToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    void getMatches_nonOwner_isForbidden() throws Exception {
+        String ownerToken = registerAndLogin("student-matches-owner@example.com", "STUDENT");
+        String otherToken = registerAndLogin("student-matches-other@example.com", "STUDENT");
+        String gigBody = """
+                {"subject":"Math","level":"High School","description":"desc"}
+                """;
+        var createResult = mockMvc.perform(post("/api/v1/gigs")
+                        .header("Authorization", "Bearer " + ownerToken)
+                        .contentType("application/json")
+                        .content(gigBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String gigId = objectMapper.readTree(createResult.getResponse().getContentAsString()).get("id").asText();
+
+        mockMvc.perform(get("/api/v1/gigs/" + gigId + "/matches").header("Authorization", "Bearer " + otherToken))
+                .andExpect(status().isForbidden());
     }
 }

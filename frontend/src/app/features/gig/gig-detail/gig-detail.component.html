@@ -1,0 +1,41 @@
+<div class="gig-detail-page">
+  @if (loading()) {
+    <div class="skeleton-list">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    </div>
+  } @else if (error()) {
+    <p class="message error">{{ 'gig.detail.loadError' | translate }}</p>
+    <button mat-stroked-button (click)="retry()">
+      {{ 'gig.detail.retry' | translate }}
+    </button>
+  } @else if (gig(); as g) {
+    <mat-card class="gig-summary">
+      <h1>{{ g.subject }} — {{ g.level }}</h1>
+      <p>{{ g.description }}</p>
+    </mat-card>
+
+    <h2>{{ 'gig.detail.matchesTitle' | translate }}</h2>
+
+    @if (matches().length === 0) {
+      <p class="empty">{{ 'gig.detail.noMatches' | translate }}</p>
+      <a mat-flat-button color="primary" routerLink="/tutors">{{ 'gig.detail.browseAll' | translate }}</a>
+    } @else {
+      <div class="match-list">
+        @for (match of matches(); track match.tutorUserId) {
+          <mat-card class="match-card" [routerLink]="['/profile/tutor', match.tutorUserId]">
+            @if (match.tutor; as tutor) {
+              <p class="subjects">{{ tutor.subjects.join(', ') }}</p>
+              <p class="rate">{{ tutor.hourlyRateMad }} MAD/h</p>
+              @if (tutor.avgRating !== null) {
+                <p class="rating">{{ 'profile.tutor.rating' | translate }}: {{ tutor.avgRating }}</p>
+              }
+            }
+            <p class="score">{{ 'gig.detail.matchScore' | translate }}: {{ (match.similarityScore * 100).toFixed(0) }}%</p>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</div>

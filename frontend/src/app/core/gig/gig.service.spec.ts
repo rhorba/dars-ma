@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { GigService } from './gig.service';
-import { GigRequest } from './gig.models';
+import { GigRequest, MatchSuggestion } from './gig.models';
 
 describe('GigService', () => {
   let service: GigService;
@@ -51,5 +51,13 @@ describe('GigService', () => {
     const req = httpMock.expectOne('/api/v1/gigs/gig-1');
     expect(req.request.method).toBe('GET');
     req.flush(sampleGig);
+  });
+
+  it('getMatches() GETs /api/v1/gigs/:id/matches', () => {
+    const matches: MatchSuggestion[] = [{ tutorUserId: 'tutor-1', similarityScore: 0.9 }];
+    service.getMatches('gig-1').subscribe((result) => expect(result).toEqual(matches));
+    const req = httpMock.expectOne('/api/v1/gigs/gig-1/matches');
+    expect(req.request.method).toBe('GET');
+    req.flush(matches);
   });
 });

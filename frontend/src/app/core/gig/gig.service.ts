@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GigRequest, GigRequestCreateRequest } from './gig.models';
+import { GigRequest, GigRequestCreateRequest, MatchSuggestion } from './gig.models';
 
 @Injectable({ providedIn: 'root' })
 export class GigService {
@@ -13,5 +13,9 @@ export class GigService {
 
   getGig(id: string): Observable<GigRequest> {
     return this.http.get<GigRequest>(`/api/v1/gigs/${id}`);
+  }
+
+  getMatches(id: string): Observable<MatchSuggestion[]> {
+    return this.http.get<MatchSuggestion[]>(`/api/v1/gigs/${id}/matches`);
   }
 }

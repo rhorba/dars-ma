@@ -2,6 +2,7 @@ package ma.darsma.backend.gig;
 
 import ma.darsma.backend.gig.dto.GigRequestCreateRequest;
 import ma.darsma.backend.matching.EmbeddingService;
+import ma.darsma.backend.matching.MatchingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,13 +20,15 @@ class GigRequestServiceTest {
 
     private GigRequestRepository gigRequestRepository;
     private EmbeddingService embeddingService;
+    private MatchingService matchingService;
     private GigRequestService gigRequestService;
 
     @BeforeEach
     void setUp() {
         gigRequestRepository = mock(GigRequestRepository.class);
         embeddingService = mock(EmbeddingService.class);
-        gigRequestService = new GigRequestService(gigRequestRepository, embeddingService);
+        matchingService = mock(MatchingService.class);
+        gigRequestService = new GigRequestService(gigRequestRepository, embeddingService, matchingService);
     }
 
     @Test
@@ -41,6 +44,7 @@ class GigRequestServiceTest {
         assertThat(result.getSubject()).isEqualTo("Math");
         assertThat(result.getStatus()).isEqualTo(GigStatus.OPEN);
         verify(embeddingService).embedGigRequest(result);
+        verify(matchingService).generateMatches(result);
     }
 
     @Test

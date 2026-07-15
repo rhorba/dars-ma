@@ -3,10 +3,13 @@ package ma.darsma.backend.gig;
 import jakarta.validation.Valid;
 import ma.darsma.backend.gig.dto.GigRequestCreateRequest;
 import ma.darsma.backend.gig.dto.GigRequestResponse;
+import ma.darsma.backend.matching.MatchingService;
+import ma.darsma.backend.matching.dto.MatchSuggestionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -14,9 +17,11 @@ import java.util.UUID;
 public class GigRequestController {
 
     private final GigRequestService gigRequestService;
+    private final MatchingService matchingService;
 
-    public GigRequestController(GigRequestService gigRequestService) {
+    public GigRequestController(GigRequestService gigRequestService, MatchingService matchingService) {
         this.gigRequestService = gigRequestService;
+        this.matchingService = matchingService;
     }
 
     @PostMapping
@@ -30,5 +35,12 @@ public class GigRequestController {
     public GigRequestResponse getOwn(Authentication authentication, @PathVariable UUID id) {
         UUID requesterId = UUID.fromString(authentication.getName());
         return GigRequestResponse.from(gigRequestService.getForOwner(id, requesterId));
+    }
+
+    @GetMapping("/{id}/matches")
+    public List<MatchSuggestionResponse> getMatches(Authentication authentication, @PathVariable UUID id) {
+        UUID requesterId = UUID.fromString(authentication.getName());
+        GigRequest gigRequest = gigRequestService.getForOwner(id, requesterId);
+        return matchingService.getMatches(gigRequest).stream().map(MatchSuggestionResponse::from).toList();
     }
 }
