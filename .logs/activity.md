@@ -281,3 +281,6 @@ Next: SHIP (push, CI monitor).
 ## SHIP — Sprint 6 (2026-07-16, session 6)
 Pushed commit 62685a0 to origin/main. CI run 29524337956: GREEN on first attempt - security, frontend-test, backend-test, build all passed.
 Epic 5 (Reviews & Messaging) fully shipped: stories 5.1 (post-completion reviews) and 5.2 (booking-scoped messaging) complete, Sprint 6 DoD met per docs/stories-dars-ma.md ("Reviews and messaging work end-to-end, scoped correctly. Coverage >= 80%.").
+
+## CI check — docs-log commit (2026-07-16, session 6, end)
+Commit 4befaee (docs-only, Sprint 6 log entries) CI run 29525216215: GREEN on all 4 jobs (backend-test, security, frontend-test, build). No code risk since this commit touched only .logs/ files, but rule 11 (CI monitoring mandatory) confirmed anyway before ending the session.
