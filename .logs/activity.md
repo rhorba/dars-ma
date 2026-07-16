@@ -277,3 +277,7 @@ Full `ng test --coverage`: 24 files / 96 tests green, 86.96% statements / 92.53%
 ## VERIFY — Sprint 6 (2026-07-16, session 6)
 Both coverage gates clear 80% on the statements/lines metrics this project has used as its reported gate throughout (backend 92.39%/87.30%, frontend 86.96%/92.53%). Security: no local gitleaks binary (consistent with sessions 3-5); manual diff review found no secrets, all new SQL uses JPA/parameterized queries or native queries with bound params (no string concatenation). IDOR: review and message endpoints both reuse Booking.isParty() and return 403 for non-parties, covered by dedicated IT tests on both. Reviewee for a review is always derived server-side from the booking record, never accepted from the client, closing off a rating-tampering vector symmetric to the price-tampering concern from Epic 4.
 Next: SHIP (push, CI monitor).
+
+## SHIP — Sprint 6 (2026-07-16, session 6)
+Pushed commit 62685a0 to origin/main. CI run 29524337956: GREEN on first attempt - security, frontend-test, backend-test, build all passed.
+Epic 5 (Reviews & Messaging) fully shipped: stories 5.1 (post-completion reviews) and 5.2 (booking-scoped messaging) complete, Sprint 6 DoD met per docs/stories-dars-ma.md ("Reviews and messaging work end-to-end, scoped correctly. Coverage >= 80%.").
