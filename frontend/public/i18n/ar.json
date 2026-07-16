@@ -122,7 +122,22 @@
       "yes": "نعم",
       "no": "ليس بعد",
       "markComplete": "وضع علامة اكتمال الجلسة",
-      "reportIssue": "الإبلاغ عن مشكلة"
+      "reportIssue": "الإبلاغ عن مشكلة",
+      "review": {
+        "title": "اترك تقييمًا",
+        "ratingLabel": "التقييم",
+        "commentLabel": "تعليق (اختياري)",
+        "submit": "إرسال التقييم",
+        "submitError": "تعذر إرسال تقييمك",
+        "existingTitle": "التقييمات",
+        "you": "أنت"
+      },
+      "messages": {
+        "title": "الرسائل",
+        "empty": "لا توجد رسائل بعد",
+        "placeholder": "اكتب رسالة",
+        "send": "إرسال"
+      }
     }
   },
   "admin": {

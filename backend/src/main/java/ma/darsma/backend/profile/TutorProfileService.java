@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,5 +44,13 @@ public class TutorProfileService {
         return subject == null || subject.isBlank()
                 ? tutorProfileRepository.findAllVerified()
                 : tutorProfileRepository.findVerifiedBySubject(subject);
+    }
+
+    @Transactional
+    public void updateAvgRating(UUID tutorUserId, BigDecimal avgRating) {
+        tutorProfileRepository.findById(tutorUserId).ifPresent(profile -> {
+            profile.setAvgRating(avgRating);
+            tutorProfileRepository.save(profile);
+        });
     }
 }

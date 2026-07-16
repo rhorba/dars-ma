@@ -73,6 +73,7 @@ public class TutorProfile {
     public void setSubjects(String[] subjects) { this.subjects = subjects; }
     public void setHourlyRateMad(BigDecimal hourlyRateMad) { this.hourlyRateMad = hourlyRateMad; }
     public void setVerificationStatus(VerificationStatus verificationStatus) { this.verificationStatus = verificationStatus; }
+    public void setAvgRating(BigDecimal avgRating) { this.avgRating = avgRating; }
 
     public static final class Builder {
         private UUID userId;

@@ -122,7 +122,22 @@
       "yes": "Oui",
       "no": "Pas encore",
       "markComplete": "Marquer la séance comme terminée",
-      "reportIssue": "Signaler un problème"
+      "reportIssue": "Signaler un problème",
+      "review": {
+        "title": "Laisser un avis",
+        "ratingLabel": "Note",
+        "commentLabel": "Commentaire (facultatif)",
+        "submit": "Envoyer l'avis",
+        "submitError": "Impossible d'envoyer votre avis",
+        "existingTitle": "Avis",
+        "you": "Vous"
+      },
+      "messages": {
+        "title": "Messages",
+        "empty": "Aucun message pour l'instant",
+        "placeholder": "Écrire un message",
+        "send": "Envoyer"
+      }
     }
   },
   "admin": {

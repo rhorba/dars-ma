@@ -122,7 +122,22 @@
       "yes": "Yes",
       "no": "Not yet",
       "markComplete": "Mark session complete",
-      "reportIssue": "Report an issue"
+      "reportIssue": "Report an issue",
+      "review": {
+        "title": "Leave a review",
+        "ratingLabel": "Rating",
+        "commentLabel": "Comment (optional)",
+        "submit": "Submit review",
+        "submitError": "Could not submit your review",
+        "existingTitle": "Reviews",
+        "you": "You"
+      },
+      "messages": {
+        "title": "Messages",
+        "empty": "No messages yet",
+        "placeholder": "Write a message",
+        "send": "Send"
+      }
     }
   },
   "admin": {

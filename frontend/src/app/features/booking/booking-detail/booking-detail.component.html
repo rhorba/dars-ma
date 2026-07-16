@@ -12,6 +12,42 @@
 
       @if (b.status === 'COMPLETED') {
         <p class="message success">{{ 'booking.detail.completedMessage' | translate }}</p>
+
+        <div class="reviews-section">
+          @if (reviews().length > 0) {
+            <h3>{{ 'booking.detail.review.existingTitle' | translate }}</h3>
+            @for (r of reviews(); track r.id) {
+              <p class="review-item">
+                <strong>{{ r.reviewerId === authUserId() ? ('booking.detail.review.you' | translate) : '' }}</strong>
+                {{ r.rating }}/5 — {{ r.comment }}
+              </p>
+            }
+          }
+
+          @if (!hasReviewed()) {
+            <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="review-form">
+              <h3>{{ 'booking.detail.review.title' | translate }}</h3>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'booking.detail.review.ratingLabel' | translate }}</mat-label>
+                <mat-select formControlName="rating">
+                  @for (n of ratingOptions; track n) {
+                    <mat-option [value]="n">{{ n }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'booking.detail.review.commentLabel' | translate }}</mat-label>
+                <textarea matInput formControlName="comment"></textarea>
+              </mat-form-field>
+              @if (reviewError()) {
+                <p class="message error">{{ 'booking.detail.review.submitError' | translate }}</p>
+              }
+              <button mat-flat-button color="primary" type="submit" [disabled]="submittingReview()">
+                {{ 'booking.detail.review.submit' | translate }}
+              </button>
+            </form>
+          }
+        </div>
       } @else if (b.status === 'DISPUTED') {
         <p class="message dispute">{{ 'booking.detail.disputedMessage' | translate }}</p>
       } @else if (b.status === 'REFUNDED') {
@@ -38,6 +74,26 @@
           }
         </div>
       }
+
+      <div class="messages-section">
+        <h3>{{ 'booking.detail.messages.title' | translate }}</h3>
+        @if (messages().length === 0) {
+          <p class="empty">{{ 'booking.detail.messages.empty' | translate }}</p>
+        } @else {
+          @for (m of messages(); track m.id) {
+            <p class="message-item" [class.own]="m.senderId === authUserId()">{{ m.body }}</p>
+          }
+        }
+        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="message-form">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'booking.detail.messages.placeholder' | translate }}</mat-label>
+            <textarea matInput formControlName="body"></textarea>
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="submit" [disabled]="sendingMessage()">
+            {{ 'booking.detail.messages.send' | translate }}
+          </button>
+        </form>
+      </div>
     </mat-card>
   }
 </div>
