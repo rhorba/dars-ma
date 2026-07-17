@@ -6,10 +6,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from './core/auth/auth.service';
 import { AppLang, I18nService } from './core/i18n/i18n.service';
+import { NotificationBellComponent } from './shared/notification-bell/notification-bell.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, MatMenuModule, TranslatePipe],
+  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, MatMenuModule, TranslatePipe, NotificationBellComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

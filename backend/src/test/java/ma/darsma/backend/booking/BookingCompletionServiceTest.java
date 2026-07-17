@@ -1,9 +1,11 @@
 package ma.darsma.backend.booking;
 
-import ma.darsma.backend.notification.NotificationService;
+import ma.darsma.backend.notification.event.BookingCompletedEvent;
+import ma.darsma.backend.notification.event.EscrowReleasedEvent;
 import ma.darsma.backend.shared.audit.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -21,7 +23,7 @@ class BookingCompletionServiceTest {
     private BookingRepository bookingRepository;
     private EscrowTransactionRepository escrowTransactionRepository;
     private EscrowPaymentProvider escrowPaymentProvider;
-    private NotificationService notificationService;
+    private ApplicationEventPublisher eventPublisher;
     private AuditLogService auditLogService;
     private BookingCompletionService completionService;
 
@@ -34,10 +36,10 @@ class BookingCompletionServiceTest {
         bookingRepository = mock(BookingRepository.class);
         escrowTransactionRepository = mock(EscrowTransactionRepository.class);
         escrowPaymentProvider = mock(EscrowPaymentProvider.class);
-        notificationService = mock(NotificationService.class);
+        eventPublisher = mock(ApplicationEventPublisher.class);
         auditLogService = mock(AuditLogService.class);
         completionService = new BookingCompletionService(bookingRepository, escrowTransactionRepository,
-                escrowPaymentProvider, notificationService, auditLogService);
+                escrowPaymentProvider, eventPublisher, auditLogService);
         when(bookingRepository.save(any(Booking.class))).thenAnswer(inv -> inv.getArgument(0));
     }
 
@@ -89,8 +91,8 @@ class BookingCompletionServiceTest {
         verify(escrowPaymentProvider).release("mock-ref");
         assertThat(escrowTransaction.getStatus()).isEqualTo(EscrowStatus.RELEASED);
         verify(escrowTransactionRepository).save(escrowTransaction);
-        verify(notificationService).create(eq(studentId), eq("BOOKING_COMPLETED"), any());
-        verify(notificationService).create(eq(tutorId), eq("BOOKING_COMPLETED"), any());
+        verify(eventPublisher).publishEvent(new BookingCompletedEvent(bookingId, studentId, tutorId));
+        verify(eventPublisher).publishEvent(new EscrowReleasedEvent(bookingId, studentId, tutorId));
         verify(auditLogService).record(eq(tutorId), eq("BOOKING_COMPLETED"), eq("bookings"), eq(bookingId), any());
     }
 
@@ -113,7 +115,7 @@ class BookingCompletionServiceTest {
         Booking result = completionService.confirmCompletion(bookingId, studentId);
 
         assertThat(result.getStatus()).isEqualTo(BookingStatus.COMPLETED);
-        verifyNoInteractions(escrowPaymentProvider, notificationService, auditLogService);
+        verifyNoInteractions(escrowPaymentProvider, eventPublisher, auditLogService);
         verify(bookingRepository, never()).save(any());
     }
 

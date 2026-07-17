@@ -9,7 +9,10 @@ import ma.darsma.backend.booking.EscrowStatus;
 import ma.darsma.backend.booking.EscrowTransaction;
 import ma.darsma.backend.booking.EscrowTransactionRepository;
 import ma.darsma.backend.notification.NotificationService;
+import ma.darsma.backend.notification.event.BookingCompletedEvent;
+import ma.darsma.backend.notification.event.EscrowReleasedEvent;
 import ma.darsma.backend.shared.audit.AuditLogService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,17 +32,20 @@ public class AdminBookingDisputeService {
     private final EscrowTransactionRepository escrowTransactionRepository;
     private final EscrowPaymentProvider escrowPaymentProvider;
     private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
     private final AuditLogService auditLogService;
 
     public AdminBookingDisputeService(BookingRepository bookingRepository,
                                        EscrowTransactionRepository escrowTransactionRepository,
                                        EscrowPaymentProvider escrowPaymentProvider,
                                        NotificationService notificationService,
+                                       ApplicationEventPublisher eventPublisher,
                                        AuditLogService auditLogService) {
         this.bookingRepository = bookingRepository;
         this.escrowTransactionRepository = escrowTransactionRepository;
         this.escrowPaymentProvider = escrowPaymentProvider;
         this.notificationService = notificationService;
+        this.eventPublisher = eventPublisher;
         this.auditLogService = auditLogService;
     }
 
@@ -62,6 +68,8 @@ public class AdminBookingDisputeService {
             escrowTransaction.setStatus(EscrowStatus.RELEASED);
             escrowTransaction.setReleasedAt(Instant.now());
             booking.setStatus(BookingStatus.COMPLETED);
+            eventPublisher.publishEvent(new BookingCompletedEvent(bookingId, booking.getStudentUserId(), booking.getTutorUserId()));
+            eventPublisher.publishEvent(new EscrowReleasedEvent(bookingId, booking.getStudentUserId(), booking.getTutorUserId()));
         } else {
             escrowPaymentProvider.refund(escrowTransaction.getCmiReference());
             escrowTransaction.setStatus(EscrowStatus.REFUNDED);

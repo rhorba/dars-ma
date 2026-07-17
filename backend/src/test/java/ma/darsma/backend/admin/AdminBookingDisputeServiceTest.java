@@ -2,9 +2,12 @@ package ma.darsma.backend.admin;
 
 import ma.darsma.backend.booking.*;
 import ma.darsma.backend.notification.NotificationService;
+import ma.darsma.backend.notification.event.BookingCompletedEvent;
+import ma.darsma.backend.notification.event.EscrowReleasedEvent;
 import ma.darsma.backend.shared.audit.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -24,6 +27,7 @@ class AdminBookingDisputeServiceTest {
     private EscrowTransactionRepository escrowTransactionRepository;
     private EscrowPaymentProvider escrowPaymentProvider;
     private NotificationService notificationService;
+    private ApplicationEventPublisher eventPublisher;
     private AuditLogService auditLogService;
     private AdminBookingDisputeService service;
 
@@ -38,9 +42,10 @@ class AdminBookingDisputeServiceTest {
         escrowTransactionRepository = mock(EscrowTransactionRepository.class);
         escrowPaymentProvider = mock(EscrowPaymentProvider.class);
         notificationService = mock(NotificationService.class);
+        eventPublisher = mock(ApplicationEventPublisher.class);
         auditLogService = mock(AuditLogService.class);
         service = new AdminBookingDisputeService(bookingRepository, escrowTransactionRepository,
-                escrowPaymentProvider, notificationService, auditLogService);
+                escrowPaymentProvider, notificationService, eventPublisher, auditLogService);
         when(bookingRepository.save(any(Booking.class))).thenAnswer(inv -> inv.getArgument(0));
     }
 
@@ -85,6 +90,8 @@ class AdminBookingDisputeServiceTest {
         verify(escrowPaymentProvider, never()).refund(any());
         verify(notificationService).create(eq(studentId), eq("DISPUTE_RESOLVED"), any());
         verify(notificationService).create(eq(tutorId), eq("DISPUTE_RESOLVED"), any());
+        verify(eventPublisher).publishEvent(new BookingCompletedEvent(bookingId, studentId, tutorId));
+        verify(eventPublisher).publishEvent(new EscrowReleasedEvent(bookingId, studentId, tutorId));
         verify(auditLogService).record(eq(adminId), eq("DISPUTE_RESOLVED"), eq("bookings"), eq(bookingId), any());
     }
 
@@ -100,6 +107,7 @@ class AdminBookingDisputeServiceTest {
         assertThat(escrow.getStatus()).isEqualTo(EscrowStatus.REFUNDED);
         verify(escrowPaymentProvider).refund("mock-ref");
         verify(escrowPaymentProvider, never()).release(any());
+        verifyNoInteractions(eventPublisher);
     }
 
     @Test

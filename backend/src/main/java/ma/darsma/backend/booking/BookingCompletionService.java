@@ -1,7 +1,9 @@
 package ma.darsma.backend.booking;
 
-import ma.darsma.backend.notification.NotificationService;
+import ma.darsma.backend.notification.event.BookingCompletedEvent;
+import ma.darsma.backend.notification.event.EscrowReleasedEvent;
 import ma.darsma.backend.shared.audit.AuditLogService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,18 +22,18 @@ public class BookingCompletionService {
     private final BookingRepository bookingRepository;
     private final EscrowTransactionRepository escrowTransactionRepository;
     private final EscrowPaymentProvider escrowPaymentProvider;
-    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
     private final AuditLogService auditLogService;
 
     public BookingCompletionService(BookingRepository bookingRepository,
                                      EscrowTransactionRepository escrowTransactionRepository,
                                      EscrowPaymentProvider escrowPaymentProvider,
-                                     NotificationService notificationService,
+                                     ApplicationEventPublisher eventPublisher,
                                      AuditLogService auditLogService) {
         this.bookingRepository = bookingRepository;
         this.escrowTransactionRepository = escrowTransactionRepository;
         this.escrowPaymentProvider = escrowPaymentProvider;
-        this.notificationService = notificationService;
+        this.eventPublisher = eventPublisher;
         this.auditLogService = auditLogService;
     }
 
@@ -63,8 +65,8 @@ public class BookingCompletionService {
         if (booking.getStudentConfirmedAt() != null && booking.getTutorConfirmedAt() != null) {
             booking.setStatus(BookingStatus.COMPLETED);
             releaseEscrow(booking);
-            notificationService.create(booking.getStudentUserId(), "BOOKING_COMPLETED", Map.of("bookingId", bookingId.toString()));
-            notificationService.create(booking.getTutorUserId(), "BOOKING_COMPLETED", Map.of("bookingId", bookingId.toString()));
+            eventPublisher.publishEvent(new BookingCompletedEvent(bookingId, booking.getStudentUserId(), booking.getTutorUserId()));
+            eventPublisher.publishEvent(new EscrowReleasedEvent(bookingId, booking.getStudentUserId(), booking.getTutorUserId()));
             auditLogService.record(requesterId, "BOOKING_COMPLETED", "bookings", bookingId, Map.of());
         }
 

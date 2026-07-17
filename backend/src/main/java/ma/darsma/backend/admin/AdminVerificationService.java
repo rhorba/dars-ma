@@ -3,6 +3,7 @@ package ma.darsma.backend.admin;
 import ma.darsma.backend.auth.User;
 import ma.darsma.backend.auth.UserRepository;
 import ma.darsma.backend.notification.NotificationService;
+import ma.darsma.backend.notification.event.TutorVerifiedEvent;
 import ma.darsma.backend.profile.TutorProfile;
 import ma.darsma.backend.profile.TutorProfileRepository;
 import ma.darsma.backend.profile.VerificationDocument;
@@ -10,6 +11,7 @@ import ma.darsma.backend.profile.VerificationDocumentRepository;
 import ma.darsma.backend.profile.VerificationStatus;
 import ma.darsma.backend.shared.audit.AuditLogService;
 import ma.darsma.backend.shared.security.DocumentEncryptionService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,6 +31,7 @@ public class AdminVerificationService {
     private final TutorProfileRepository tutorProfileRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
     private final AuditLogService auditLogService;
     private final DocumentEncryptionService documentEncryptionService;
 
@@ -36,12 +39,14 @@ public class AdminVerificationService {
                                      TutorProfileRepository tutorProfileRepository,
                                      UserRepository userRepository,
                                      NotificationService notificationService,
+                                     ApplicationEventPublisher eventPublisher,
                                      AuditLogService auditLogService,
                                      DocumentEncryptionService documentEncryptionService) {
         this.verificationDocumentRepository = verificationDocumentRepository;
         this.tutorProfileRepository = tutorProfileRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.eventPublisher = eventPublisher;
         this.auditLogService = auditLogService;
         this.documentEncryptionService = documentEncryptionService;
     }
@@ -77,6 +82,7 @@ public class AdminVerificationService {
 
         notificationService.create(document.getTutorUserId(), "VERIFICATION_APPROVED",
                 Map.of("documentId", documentId.toString()));
+        eventPublisher.publishEvent(new TutorVerifiedEvent(document.getTutorUserId(), documentId));
         auditLogService.record(adminId, "VERIFICATION_APPROVED", "verification_documents", documentId,
                 Map.of("tutorUserId", document.getTutorUserId().toString()));
     }

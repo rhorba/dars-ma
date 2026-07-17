@@ -52,6 +52,10 @@ public class Notification {
     public Instant getReadAt() { return readAt; }
     public Instant getCreatedAt() { return createdAt; }
 
+    public void markRead() {
+        this.readAt = Instant.now();
+    }
+
     public static final class Builder {
         private UUID userId;
         private String type;

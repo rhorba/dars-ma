@@ -8,3 +8,12 @@ export interface VerificationQueueItem {
   originalFilename: string | null;
   submittedAt: string;
 }
+
+export interface AdminAnalytics {
+  studentSignups: number;
+  tutorSignups: number;
+  totalBookings: number;
+  completedBookings: number;
+  gmvMad: number;
+  matchRatePercent: number;
+}

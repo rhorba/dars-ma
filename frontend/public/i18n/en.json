@@ -160,6 +160,33 @@
       "refundToStudent": "Refund to student",
       "resolveSuccess": "Dispute resolved",
       "actionError": "Action failed"
+    },
+    "analytics": {
+      "title": "Platform analytics",
+      "loading": "Loading analytics...",
+      "loadError": "Couldn't load analytics, please try again",
+      "signups": "Signups",
+      "students": "Students",
+      "tutors": "Tutors",
+      "bookings": "Bookings",
+      "completed": "Completed",
+      "gmv": "Gross merchandise value",
+      "matchRate": "Match rate"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "types": {
+      "BOOKING_CREATED": "A new booking was created",
+      "BOOKING_COMPLETED": "Your booking is complete",
+      "BOOKING_DISPUTED": "A booking was disputed",
+      "DISPUTE_RESOLVED": "A dispute was resolved",
+      "ESCROW_RELEASED": "Escrow released",
+      "VERIFICATION_APPROVED": "Your verification document was approved",
+      "VERIFICATION_REJECTED": "Your verification document was rejected",
+      "TUTOR_VERIFIED": "You're verified",
+      "REVIEW_RECEIVED": "You received a review"
     }
   }
 }

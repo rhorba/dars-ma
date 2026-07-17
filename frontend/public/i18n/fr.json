@@ -160,6 +160,33 @@
       "refundToStudent": "Rembourser l'étudiant",
       "resolveSuccess": "Litige résolu",
       "actionError": "Action échouée"
+    },
+    "analytics": {
+      "title": "Statistiques de la plateforme",
+      "loading": "Chargement des statistiques...",
+      "loadError": "Impossible de charger les statistiques, veuillez réessayer",
+      "signups": "Inscriptions",
+      "students": "Étudiants",
+      "tutors": "Tuteurs",
+      "bookings": "Réservations",
+      "completed": "Terminées",
+      "gmv": "Volume brut de transactions",
+      "matchRate": "Taux de correspondance"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification pour l'instant",
+    "types": {
+      "BOOKING_CREATED": "Une nouvelle réservation a été créée",
+      "BOOKING_COMPLETED": "Votre réservation est terminée",
+      "BOOKING_DISPUTED": "Une réservation fait l'objet d'un litige",
+      "DISPUTE_RESOLVED": "Un litige a été résolu",
+      "ESCROW_RELEASED": "Paiement en séquestre libéré",
+      "VERIFICATION_APPROVED": "Votre document de vérification a été approuvé",
+      "VERIFICATION_REJECTED": "Votre document de vérification a été refusé",
+      "TUTOR_VERIFIED": "Vous êtes vérifié",
+      "REVIEW_RECEIVED": "Vous avez reçu un avis"
     }
   }
 }

@@ -160,6 +160,33 @@
       "refundToStudent": "استرداد إلى الطالب",
       "resolveSuccess": "تم حل النزاع",
       "actionError": "فشل الإجراء"
+    },
+    "analytics": {
+      "title": "إحصاءات المنصة",
+      "loading": "جارٍ تحميل الإحصاءات...",
+      "loadError": "تعذر تحميل الإحصاءات، حاول مرة أخرى",
+      "signups": "التسجيلات",
+      "students": "الطلاب",
+      "tutors": "الأساتذة",
+      "bookings": "الحجوزات",
+      "completed": "المكتملة",
+      "gmv": "إجمالي حجم المعاملات",
+      "matchRate": "نسبة التوافق"
+    }
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "empty": "لا توجد إشعارات بعد",
+    "types": {
+      "BOOKING_CREATED": "تم إنشاء حجز جديد",
+      "BOOKING_COMPLETED": "اكتمل حجزك",
+      "BOOKING_DISPUTED": "تم فتح نزاع على حجز",
+      "DISPUTE_RESOLVED": "تم حل النزاع",
+      "ESCROW_RELEASED": "تم تحرير مبلغ الضمان",
+      "VERIFICATION_APPROVED": "تمت الموافقة على وثيقة التحقق الخاصة بك",
+      "VERIFICATION_REJECTED": "تم رفض وثيقة التحقق الخاصة بك",
+      "TUTOR_VERIFIED": "تم التحقق من حسابك",
+      "REVIEW_RECEIVED": "تلقيت تقييمًا جديدًا"
     }
   }
 }

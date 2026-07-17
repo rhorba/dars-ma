@@ -3,14 +3,14 @@ package ma.darsma.backend.review;
 import ma.darsma.backend.booking.Booking;
 import ma.darsma.backend.booking.BookingRepository;
 import ma.darsma.backend.booking.BookingStatus;
-import ma.darsma.backend.notification.NotificationService;
+import ma.darsma.backend.notification.event.ReviewSubmittedEvent;
 import ma.darsma.backend.profile.TutorProfileService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -23,14 +23,14 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookingRepository bookingRepository;
     private final TutorProfileService tutorProfileService;
-    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public ReviewService(ReviewRepository reviewRepository, BookingRepository bookingRepository,
-                          TutorProfileService tutorProfileService, NotificationService notificationService) {
+                          TutorProfileService tutorProfileService, ApplicationEventPublisher eventPublisher) {
         this.reviewRepository = reviewRepository;
         this.bookingRepository = bookingRepository;
         this.tutorProfileService = tutorProfileService;
-        this.notificationService = notificationService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -63,7 +63,7 @@ public class ReviewService {
                     reviewRepository.avgRatingForTutor(booking.getTutorUserId()));
         }
 
-        notificationService.create(revieweeId, "REVIEW_RECEIVED", Map.of("bookingId", bookingId.toString()));
+        eventPublisher.publishEvent(new ReviewSubmittedEvent(revieweeId, bookingId));
 
         return saved;
     }

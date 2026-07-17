@@ -1,0 +1,38 @@
+<div class="dashboard-page">
+  <h1>{{ 'admin.analytics.title' | translate }}</h1>
+
+  @if (loading()) {
+    <p>{{ 'admin.analytics.loading' | translate }}</p>
+  } @else if (error()) {
+    <p class="error">{{ 'admin.analytics.loadError' | translate }}</p>
+  } @else if (analytics(); as data) {
+    <div class="metric-grid">
+      <mat-card class="metric-card">
+        <span class="metric-label">{{ 'admin.analytics.signups' | translate }}</span>
+        <span class="metric-value">{{ totalSignups(data) }}</span>
+        <span class="metric-detail">
+          {{ 'admin.analytics.students' | translate }}: {{ data.studentSignups }} ·
+          {{ 'admin.analytics.tutors' | translate }}: {{ data.tutorSignups }}
+        </span>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <span class="metric-label">{{ 'admin.analytics.bookings' | translate }}</span>
+        <span class="metric-value">{{ data.totalBookings }}</span>
+        <span class="metric-detail">
+          {{ 'admin.analytics.completed' | translate }}: {{ data.completedBookings }}
+        </span>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <span class="metric-label">{{ 'admin.analytics.gmv' | translate }}</span>
+        <span class="metric-value">{{ data.gmvMad }} MAD</span>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <span class="metric-label">{{ 'admin.analytics.matchRate' | translate }}</span>
+        <span class="metric-value">{{ data.matchRatePercent | number: '1.0-1' }}%</span>
+      </mat-card>
+    </div>
+  }
+</div>

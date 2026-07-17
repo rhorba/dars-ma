@@ -4,6 +4,7 @@ import ma.darsma.backend.auth.Role;
 import ma.darsma.backend.auth.User;
 import ma.darsma.backend.auth.UserRepository;
 import ma.darsma.backend.notification.NotificationService;
+import ma.darsma.backend.notification.event.TutorVerifiedEvent;
 import ma.darsma.backend.profile.TutorProfile;
 import ma.darsma.backend.profile.TutorProfileRepository;
 import ma.darsma.backend.profile.VerificationDocument;
@@ -13,6 +14,7 @@ import ma.darsma.backend.shared.audit.AuditLogService;
 import ma.darsma.backend.shared.security.DocumentEncryptionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -32,6 +34,7 @@ class AdminVerificationServiceTest {
     private TutorProfileRepository tutorProfileRepository;
     private UserRepository userRepository;
     private NotificationService notificationService;
+    private ApplicationEventPublisher eventPublisher;
     private AuditLogService auditLogService;
     private DocumentEncryptionService documentEncryptionService;
     private AdminVerificationService service;
@@ -42,10 +45,11 @@ class AdminVerificationServiceTest {
         tutorProfileRepository = mock(TutorProfileRepository.class);
         userRepository = mock(UserRepository.class);
         notificationService = mock(NotificationService.class);
+        eventPublisher = mock(ApplicationEventPublisher.class);
         auditLogService = mock(AuditLogService.class);
         documentEncryptionService = mock(DocumentEncryptionService.class);
         service = new AdminVerificationService(verificationDocumentRepository, tutorProfileRepository,
-                userRepository, notificationService, auditLogService, documentEncryptionService);
+                userRepository, notificationService, eventPublisher, auditLogService, documentEncryptionService);
     }
 
     private VerificationDocument unreviewedDocument(UUID docId, UUID tutorId) {
@@ -83,6 +87,7 @@ class AdminVerificationServiceTest {
         assertThat(doc.getReviewedAt()).isNotNull();
         assertThat(profile.getVerificationStatus()).isEqualTo(VerificationStatus.VERIFIED);
         verify(notificationService).create(eq(tutorId), eq("VERIFICATION_APPROVED"), any());
+        verify(eventPublisher).publishEvent(new TutorVerifiedEvent(tutorId, docId));
         verify(auditLogService).record(eq(adminId), eq("VERIFICATION_APPROVED"), eq("verification_documents"), eq(docId), any());
     }
 
@@ -116,7 +121,7 @@ class AdminVerificationServiceTest {
         assertThatThrownBy(() -> service.approve(docId, UUID.randomUUID()))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("already been reviewed");
-        verifyNoInteractions(notificationService);
+        verifyNoInteractions(notificationService, eventPublisher);
     }
 
     @Test

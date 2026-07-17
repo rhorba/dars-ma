@@ -10,6 +10,7 @@
   </mat-menu>
 
   @if (isAuthenticated()) {
+    <app-notification-bell></app-notification-bell>
     <button mat-button (click)="logout()">{{ 'nav.logout' | translate }}</button>
   }
 </mat-toolbar>

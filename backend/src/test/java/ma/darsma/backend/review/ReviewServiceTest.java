@@ -3,10 +3,11 @@ package ma.darsma.backend.review;
 import ma.darsma.backend.booking.Booking;
 import ma.darsma.backend.booking.BookingRepository;
 import ma.darsma.backend.booking.BookingStatus;
-import ma.darsma.backend.notification.NotificationService;
+import ma.darsma.backend.notification.event.ReviewSubmittedEvent;
 import ma.darsma.backend.profile.TutorProfileService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ class ReviewServiceTest {
     private ReviewRepository reviewRepository;
     private BookingRepository bookingRepository;
     private TutorProfileService tutorProfileService;
-    private NotificationService notificationService;
+    private ApplicationEventPublisher eventPublisher;
     private ReviewService reviewService;
 
     private final UUID studentId = UUID.randomUUID();
@@ -35,8 +36,8 @@ class ReviewServiceTest {
         reviewRepository = mock(ReviewRepository.class);
         bookingRepository = mock(BookingRepository.class);
         tutorProfileService = mock(TutorProfileService.class);
-        notificationService = mock(NotificationService.class);
-        reviewService = new ReviewService(reviewRepository, bookingRepository, tutorProfileService, notificationService);
+        eventPublisher = mock(ApplicationEventPublisher.class);
+        reviewService = new ReviewService(reviewRepository, bookingRepository, tutorProfileService, eventPublisher);
         when(reviewRepository.save(any(Review.class))).thenAnswer(inv -> inv.getArgument(0));
     }
 
@@ -57,7 +58,7 @@ class ReviewServiceTest {
         assertThat(result.getRating()).isEqualTo((short) 5);
         assertThat(result.getReviewerId()).isEqualTo(studentId);
         verify(tutorProfileService).updateAvgRating(tutorId, new BigDecimal("4.50"));
-        verify(notificationService).create(eq(tutorId), eq("REVIEW_RECEIVED"), any());
+        verify(eventPublisher).publishEvent(new ReviewSubmittedEvent(tutorId, bookingId));
     }
 
     @Test
@@ -68,7 +69,7 @@ class ReviewServiceTest {
         reviewService.submit(bookingId, tutorId, (short) 4, null);
 
         verifyNoInteractions(tutorProfileService);
-        verify(notificationService).create(eq(studentId), eq("REVIEW_RECEIVED"), any());
+        verify(eventPublisher).publishEvent(new ReviewSubmittedEvent(studentId, bookingId));
     }
 
     @Test
