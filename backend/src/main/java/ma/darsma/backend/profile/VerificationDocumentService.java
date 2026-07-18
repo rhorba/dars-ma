@@ -54,6 +54,12 @@ public class VerificationDocumentService {
             throw new ResponseStatusException(BAD_REQUEST, "Could not read uploaded file");
         }
 
+        // Client-supplied Content-Type is untrustworthy (trivially forged) — sniff the actual
+        // file signature so a renamed executable can't pass as a PDF/JPEG/PNG.
+        if (!matchesDeclaredType(plaintext, contentType)) {
+            throw new ResponseStatusException(BAD_REQUEST, "File content does not match its declared type");
+        }
+
         VerificationDocument document = VerificationDocument.builder()
                 .tutorUserId(tutorUserId)
                 .docType(docType)
@@ -70,4 +76,29 @@ public class VerificationDocumentService {
 
         return document;
     }
+
+    private static boolean matchesDeclaredType(byte[] content, String declaredMimeType) {
+        return switch (declaredMimeType) {
+            case "application/pdf" -> startsWith(content, PDF_SIGNATURE);
+            case "image/jpeg" -> startsWith(content, JPEG_SIGNATURE);
+            case "image/png" -> startsWith(content, PNG_SIGNATURE);
+            default -> false;
+        };
+    }
+
+    private static boolean startsWith(byte[] content, byte[] signature) {
+        if (content.length < signature.length) {
+            return false;
+        }
+        for (int i = 0; i < signature.length; i++) {
+            if (content[i] != signature[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static final byte[] PDF_SIGNATURE = {'%', 'P', 'D', 'F'};
+    private static final byte[] JPEG_SIGNATURE = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
+    private static final byte[] PNG_SIGNATURE = {(byte) 0x89, 'P', 'N', 'G', '\r', '\n', 0x1A, '\n'};
 }

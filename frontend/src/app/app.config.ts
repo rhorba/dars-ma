@@ -15,8 +15,11 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
-    provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
+    // provideTranslateService registers its own default (no-op) TranslateLoader provider;
+    // since Angular DI resolves multiple same-token providers to the last one registered,
+    // the HTTP loader must come after it or it gets silently shadowed and no translations load.
     provideTranslateService({ fallbackLang: 'fr' }),
+    provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
     provideAppInitializer(() => {
       inject(I18nService).init();
     })

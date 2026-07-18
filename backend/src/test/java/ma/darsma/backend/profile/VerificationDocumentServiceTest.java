@@ -43,7 +43,7 @@ class VerificationDocumentServiceTest {
         UUID tutorId = UUID.randomUUID();
         when(tutorProfileRepository.findById(tutorId)).thenReturn(Optional.of(pendingProfile(tutorId)));
         when(documentEncryptionService.encrypt(any())).thenReturn(new byte[]{1, 2, 3});
-        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", "content".getBytes());
+        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", "%PDF-1.4 content".getBytes());
 
         VerificationDocument result = service.upload(tutorId, DocType.DIPLOMA, file);
 
@@ -61,6 +61,19 @@ class VerificationDocumentServiceTest {
         assertThatThrownBy(() -> service.upload(tutorId, DocType.DIPLOMA, file))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("PDF, JPEG, or PNG");
+        verifyNoInteractions(verificationDocumentRepository);
+    }
+
+    @Test
+    void upload_rejectsExecutableRenamedWithForgedPdfContentType() {
+        UUID tutorId = UUID.randomUUID();
+        when(tutorProfileRepository.findById(tutorId)).thenReturn(Optional.of(pendingProfile(tutorId)));
+        byte[] windowsExecutable = {'M', 'Z', (byte) 0x90, 0x00};
+        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", windowsExecutable);
+
+        assertThatThrownBy(() -> service.upload(tutorId, DocType.DIPLOMA, file))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("does not match its declared type");
         verifyNoInteractions(verificationDocumentRepository);
     }
 
@@ -105,7 +118,7 @@ class VerificationDocumentServiceTest {
         verified.setVerificationStatus(VerificationStatus.VERIFIED);
         when(tutorProfileRepository.findById(tutorId)).thenReturn(Optional.of(verified));
         when(documentEncryptionService.encrypt(any())).thenReturn(new byte[]{1});
-        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", "content".getBytes());
+        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", "%PDF-1.4 content".getBytes());
 
         service.upload(tutorId, DocType.DIPLOMA, file);
 

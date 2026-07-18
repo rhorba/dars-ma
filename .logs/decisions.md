@@ -20,3 +20,7 @@ Model download strategy: download at first container startup into a cached Docke
 
 ## Sprint 7 scope decision (2026-07-17, session 7)
 REVIEW_RECEIVED will be retrofitted into Sprint 7's domain-event-driven notification mechanism (new ReviewSubmittedEvent), rather than left as a raw NotificationService.create() call. User-picked over leaving it as-is, for consistency with the new BookingCompletedEvent/EscrowReleasedEvent/TutorVerifiedEvent pattern.
+
+## DECISION — Sprint 8 approach (2026-07-18, session 8)
+Story 7.2 (security hardening) approach: confirmation pass, not a fresh rewrite. Audit Test Strategy §4 adversarial checklist line-by-line against existing tests (Sprints 1-5 already cover auth tamper/reuse/privilege-escalation, verification-upload MIME/path-traversal, booking/escrow maximum-rigor concurrency); re-run those suites + CI scans (Semgrep/Trivy/Gitleaks) to confirm still green; write new tests only for genuine gaps found during the audit. CMI webhook-replay checklist item is moot (no webhook endpoint exists since CMI stays mock).
+Reason: avoids re-proving already-proven coverage (YAGNI) while still guaranteeing every checklist line traces to a real, currently-passing test before v1 ships.
