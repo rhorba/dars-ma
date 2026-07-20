@@ -89,7 +89,7 @@ class AdminVerificationControllerIT {
                                 """))
                 .andExpect(status().isOk());
 
-        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", "content".getBytes());
+        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", "%PDF-1.4 content".getBytes());
         String uploadResponse = mockMvc.perform(multipart("/api/v1/profile/tutor/me/verification-documents")
                         .file(file)
                         .param("docType", "DIPLOMA")
@@ -141,7 +141,7 @@ class AdminVerificationControllerIT {
         mockMvc.perform(get("/api/v1/admin/verification/documents/" + ctx.documentId() + "/content")
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk())
-                .andExpect(content().bytes("content".getBytes()));
+                .andExpect(content().bytes("%PDF-1.4 content".getBytes()));
     }
 
     @Test

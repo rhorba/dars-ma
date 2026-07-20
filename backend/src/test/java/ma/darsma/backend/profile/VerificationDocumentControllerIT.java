@@ -71,7 +71,7 @@ class VerificationDocumentControllerIT {
     @Test
     void tutor_canUploadValidDiploma() throws Exception {
         String token = registerLoginAndCreateProfile("upload-valid@example.com");
-        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", "diploma-bytes".getBytes());
+        MockMultipartFile file = new MockMultipartFile("file", "diploma.pdf", "application/pdf", "%PDF-1.4 diploma-bytes".getBytes());
 
         mockMvc.perform(multipart("/api/v1/profile/tutor/me/verification-documents")
                         .file(file)
