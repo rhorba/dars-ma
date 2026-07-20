@@ -1,0 +1,10 @@
+services:
+  backend:
+    environment:
+      COOKIE_SECURE: "true"
+      SPRING_PROFILES_ACTIVE: prod
+    restart: unless-stopped
+  frontend:
+    restart: unless-stopped
+  db:
+    restart: unless-stopped
