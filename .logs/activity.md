@@ -406,3 +406,4 @@ Sprint 8 complete - all 3 stories shipped across sessions 8-9:
 - 7.3 (CMI live switch) skipped again - no real CMI sandbox credentials provided, same deferral as every prior sprint.
 This is v1's launch milestone - the Definition of Done for the full Sprint 8 backlog (docs/stories-dars-ma.md) is met: i18n/RTL polish complete, security hardening confirmed, E2E suite green with video, coverage gates met, no open critical/high security findings.
 Committing all Sprint 8 work (sessions 8-9: i18n fix, upload content-sniffing, JWT test coverage, embedding-provider Docker fixes, prod compose, E2E scaffold + first-real-run fixes, session-restore fix, release gate checklist, this log) and pushing per rule 7.
+Pushed commit 45f9f88; CI run 29848559844 GREEN on all 4 jobs (frontend-test, security, backend-test, build) on the first attempt. Sprint 8 (Epic 7) is now fully shipped and CI-confirmed.
