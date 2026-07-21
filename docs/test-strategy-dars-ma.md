@@ -96,8 +96,8 @@ Feature: Trilingual + RTL
 - [ ] Extremely long gig description (10K+ chars) → truncated/validated before embedding generation
 
 ## 5. Release Gate Criteria
-- [ ] All ATDD acceptance scenarios pass
-- [ ] Combined unit + integration coverage ≥ 80% (CI-enforced, see DevOps doc)
-- [ ] No critical/high security findings open (Security Baseline + DevSecOps scans)
-- [ ] E2E happy paths pass (booking flow, verification flow, i18n switch) — recorded on video only at the final sprint per project convention, run headless every other sprint
-- [ ] RTL smoke-tested on every screen that shipped that sprint
+- [x] All ATDD acceptance scenarios pass (Playwright critical-path spec: register → tutor verification → admin approval → gig creation → booking → escrow → mutual completion → review, FR+AR, 2026-07-21)
+- [x] Combined unit + integration coverage ≥ 80% (backend 91%/82% instructions/branches, frontend 86.83%/92.24% statements/lines, 2026-07-21 — CI-enforced, see DevOps doc)
+- [x] No critical/high security findings open (Security Baseline + DevSecOps scans; `npm audit --omit=dev` 0 vulnerabilities; no local gitleaks binary, relying on CI's gitleaks-action per established convention)
+- [x] E2E happy paths pass (booking flow, verification flow, i18n switch) — video recorded this sprint (v1, final sprint per project convention): `.recordings/v1-2026-07-21-fr.webm`, `.recordings/v1-2026-07-21-ar.webm`
+- [x] RTL smoke-tested on every screen that shipped that sprint (AR Playwright run asserts `dir="rtl"`; manual browser verification in Batch 1 covered every route category)

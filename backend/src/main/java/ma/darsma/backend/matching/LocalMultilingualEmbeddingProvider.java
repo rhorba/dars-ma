@@ -58,9 +58,14 @@ public class LocalMultilingualEmbeddingProvider implements EmbeddingProvider {
             }
 
             HuggingFaceTokenizer tokenizer = HuggingFaceTokenizer.newInstance(modelName);
+            // The model's ONNX export declares 3 inputs (input_ids, attention_mask,
+            // token_type_ids) - the translator omits token_type_ids unless told otherwise,
+            // which fails at inference with "Input mismatch, looking for: [input_ids,
+            // attention_mask, token_type_ids]" (OrtSymbolBlock requires an exact input match).
             TextEmbeddingTranslator translator = TextEmbeddingTranslator.builder(tokenizer)
                     .optPoolingMode("mean")
                     .optNormalize(true)
+                    .optIncludeTokenTypes(true)
                     .build();
             Criteria<String, float[]> criteria = Criteria.builder()
                     .setTypes(String.class, float[].class)

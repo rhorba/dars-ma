@@ -42,8 +42,11 @@ function decodeJwtSub(accessToken: string): string {
 }
 
 async function setLang(page: Page, lang: 'fr' | 'ar'): Promise<void> {
+  // I18nService reads localStorage once, at app bootstrap - setting the value alone doesn't
+  // change the already-running app's language, a reload is required to pick it up.
   await page.goto('/');
   await page.evaluate((l) => localStorage.setItem('dars_ma_lang', l), lang);
+  await page.reload();
 }
 
 async function register(page: Page, email: string, fullName: string, role: 'STUDENT' | 'TUTOR'): Promise<void> {

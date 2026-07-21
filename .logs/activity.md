@@ -380,3 +380,29 @@ Bringing up docker-compose.prod.yml for the first time to actually run the E2E s
 Verified: `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build backend` now starts clean and reaches Docker-healthy; `/actuator/health` returns UP from inside and outside the container.
 User was consulted mid-investigation (4 bugs deep, open-ended scope) via AskUserQuestion and chose to keep investigating rather than fall back to a mock/stub or defer Batch 3 - confirmed the right call, the 5th bug was the last one.
 Next: run the actual Playwright critical-path suite (FR+AR) against the now-healthy prod-mode stack with video recording, save to .recordings/, check release gate criteria, then Sprint 8 VERIFY/SHIP.
+
+## EXECUTE — Sprint 8 Batch 3 continued, Playwright first real run (2026-07-21, session 9 continued)
+Brought the prod-mode stack back up (volumes warm, fast start) and ran the critical-path Playwright spec for real for the first time. It did not pass unmodified - two real bugs in the app surfaced, both fixed:
+1. **Embedding provider (backend)**: `LocalMultilingualEmbeddingProvider` - the paraphrase-multilingual-MiniLM-L12-v2 ONNX export declares 3 inputs (input_ids, attention_mask, token_type_ids), but DJL's `TextEmbeddingTranslator` omits token_type_ids unless told otherwise, failing at inference with an exact-input-match error from `OrtSymbolBlock`. This had never been exercised before this session since it's `@Profile("!test")` and every prior test/session used the fake embedding provider. Fixed with `.optIncludeTokenTypes(true)`.
+2. **i18n bootstrap race (frontend)**: `app.config.ts` had no session-restore step - the access token lives in memory only (never persisted), so on every full page load the app must attempt a silent refresh via the httpOnly cookie before the router evaluates guards, or a valid session gets treated as logged-out. This was masked in every prior manual/unit-test verification because those never did a hard reload mid-session. Fixed by adding an `provideAppInitializer` step that calls `AuthService.refresh()` and swallows failure (guests with no valid cookie stay logged out, which is correct for them).
+3. **Test helper bug (E2E spec)**: `setLang()` in critical-path.spec.ts set `localStorage` but never reloaded the page - `I18nService` only reads `localStorage` once at bootstrap, so the already-running app never picked up the language change. Added `page.reload()` after setting the key.
+After all 3 fixes, the full suite passed both parameterized runs (FR and AR) end-to-end: registration → tutor verification → admin approval (direct-DB-UPDATE promotion) → gig creation → booking → escrow hold → mutual completion → review. AR run asserts `dir="rtl"` on the document.
+Video recording captured via `E2E_RECORD_VIDEO=true`, saved to `.recordings/v1-2026-07-21-fr.webm` and `.recordings/v1-2026-07-21-ar.webm` (rule 9, first project-version-completion milestone).
+Release Gate Criteria (Test Strategy §5) checked off - see docs/test-strategy-dars-ma.md.
+
+## VERIFY — Sprint 8 (2026-07-21, session 9 continued)
+Docker Desktop was stopped at the start of this continuation (left stopped at prior session's pause) - restarted it, then ran a fresh full `mvn verify` (all unit + Testcontainers integration tests, including the JwtAuthFilterIT added in Batch 2) since the embedding-provider file changed this session and hadn't been re-verified against the full suite yet. Result: BUILD SUCCESS, all tests green.
+Backend coverage: 91% instructions / 82% branches (JaCoCo, gate ≥80% MET).
+Frontend: `ng test --coverage --watch=false` (Vitest) - 28 test files / 107 tests, all green. Coverage: 86.83% statements / 91.01% branches / 79.53% functions / 92.24% lines (gate ≥80% statements/lines MET).
+Security: `npm audit --omit=dev --audit-level=high` on frontend → 0 vulnerabilities. No local gitleaks binary (consistent with sessions 3-9); manual diff review of all 3 changed files (LocalMultilingualEmbeddingProvider.java, critical-path.spec.ts, app.config.ts) found no secrets, no new SQL, no new attack surface - the app.config.ts change adds a token-refresh call using the existing AuthService/interceptor, no new endpoint or credential handling.
+E2E: Playwright critical-path suite green (FR+AR), video recorded - see EXECUTE entry above.
+All Release Gate Criteria met.
+
+## SHIP — Sprint 8 (Epic 7: i18n/RTL Polish, Hardening & Launch) — 2026-07-21
+Sprint 8 complete - all 3 stories shipped across sessions 8-9:
+- 7.1 (i18n/RTL full pass): zero content gaps found in static audit; one critical runtime bug found and fixed (TranslateHttpLoader provider-order shadowing, since Sprint 1).
+- 7.2 (security hardening): verification upload content-sniffing (magic bytes, not just Content-Type header), JWT expired/tampered/missing-token → 403 test coverage added.
+- 7.4 (E2E + prod deploy + video): docker-compose.prod.yml, Playwright critical-path suite (FR+AR) green with video, 5 real deployment bugs in the packaged Docker image's embedding provider fixed, 2 more real bugs (embedding translator input mismatch, i18n bootstrap session-restore race) found and fixed by the first real E2E run, release gate criteria met.
+- 7.3 (CMI live switch) skipped again - no real CMI sandbox credentials provided, same deferral as every prior sprint.
+This is v1's launch milestone - the Definition of Done for the full Sprint 8 backlog (docs/stories-dars-ma.md) is met: i18n/RTL polish complete, security hardening confirmed, E2E suite green with video, coverage gates met, no open critical/high security findings.
+Committing all Sprint 8 work (sessions 8-9: i18n fix, upload content-sniffing, JWT test coverage, embedding-provider Docker fixes, prod compose, E2E scaffold + first-real-run fixes, session-restore fix, release gate checklist, this log) and pushing per rule 7.

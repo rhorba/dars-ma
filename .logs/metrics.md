@@ -38,3 +38,12 @@ Frontend coverage: 86.12% statements / 92.24% lines / 89.83% branches / 78.31% f
 Test rigor: Maximum - adversarial checklist fully covered across all 4 stories; the earlier session's flaky frontend test (tutor-profile-form timeout under load) did not recur on this run
 CI: to be monitored after this session's push
 Security: no local gitleaks binary; manual review found no secrets; dispute resolution reuses the existing ADMIN-role matcher, no new security surface
+
+## SPRINT_SNAPSHOT — Sprint 8 (Epic 7: i18n/RTL Polish, Hardening & Launch) — 2026-07-21
+Stories completed: 7.1 (i18n/RTL full pass + critical TranslateHttpLoader shadowing fix), 7.2 (upload content-sniffing + JWT expired/tampered/missing-token coverage), 7.4 (E2E critical-path suite FR+AR + docker-compose.prod.yml + video recording). Story 7.3 (CMI live switch) skipped again - no real sandbox credentials.
+Backend coverage: 91% instructions / 82% branches (JaCoCo, full `mvn verify` incl. Testcontainers ITs, gate ≥80% MET)
+Frontend coverage: 86.83% statements / 91.01% branches / 79.53% functions / 92.24% lines (Vitest v8, 107 tests/28 files, gate ≥80% statements/lines MET)
+E2E: Playwright critical-path suite (registration → verification → admin approval → gig → booking → escrow → completion → review), parameterized FR+AR, both green. AR run asserts RTL. Video recorded to `.recordings/v1-2026-07-21-fr.webm` and `.recordings/v1-2026-07-21-ar.webm` (first project-version-completion milestone, rule 9).
+Security: `npm audit --omit=dev --audit-level=high` → 0 vulnerabilities. No local gitleaks binary (consistent since session 3); manual review of all changed files found no secrets. Full scan deferred to CI's gitleaks-action.
+Release Gate Criteria (Test Strategy §5): all 5 criteria met - see docs/test-strategy-dars-ma.md.
+Notable: this sprint's first real (non-mocked) end-to-end run surfaced 7 real bugs total across 2 sessions that had been invisible to every unit/integration test up to this point - see .logs/issues.md for full detail on each.
